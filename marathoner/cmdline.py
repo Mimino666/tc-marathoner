@@ -4,6 +4,7 @@ import shutil
 import sys
 
 import marathoner
+from marathoner.project import Project
 
 
 class UsageError(Exception):
@@ -19,7 +20,7 @@ def new_marathoner(args):
                'contain only letters, numbers and underscores.')
         sys.exit(1)
     elif os.path.exists(project_name):
-        print 'Error: directory %r already exists' % project_name
+        print 'Error: directory "%s" already exists' % project_name
         sys.exit(1)
 
     templates_path = os.path.join(marathoner.__path__[0], 'templates', 'project')
@@ -27,12 +28,12 @@ def new_marathoner(args):
 
 
 def run_marathoner(args):
-    pass
+    project = Project(args[0] if args else '.')
 
 
 available_commands = {
     'new': (new_marathoner, '<project_name>', 'Create a new marathoner project.'),
-    'run': (run_marathoner, '', 'Run marathoner from the current directory.')
+    'run': (run_marathoner, '[path_to_project]', 'Run marathoner from the current directory.')
 }
 
 
@@ -40,7 +41,7 @@ def print_usage(cmd_name, help):
     _, cmd_syntax, cmd_help = available_commands[cmd_name]
     cmd = '%s %s' % (cmd_name, cmd_syntax)
     if help:
-        print '  %-20s %s' % (cmd, cmd_help)
+        print '  %-25s %s' % (cmd, cmd_help)
     else:
         print '  %s' % cmd
 
@@ -76,6 +77,9 @@ def execute(argv=None):
         print e
         print '\nUsage:'
         print_usage(cmd_name, help=False)
+        sys.exit(2)
+    except Exception as e:
+        print e
         sys.exit(2)
 
 
