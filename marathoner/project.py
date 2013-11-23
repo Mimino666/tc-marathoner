@@ -48,6 +48,9 @@ class Project(object):
                                       (field_name, value))
             setattr(self, field_name, value)
 
+        self.mediator = __import__('marathoner.mediator', fromlist=['mediator']).__file__
+        self.mediator = path.splitext(self.mediator)[0] + '.py'
+
     def clean_testcase(self, value):
         if value:
             if path.exists(value) and not path.isfile(value):
