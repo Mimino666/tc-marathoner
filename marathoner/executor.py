@@ -53,7 +53,11 @@ class Executor(object):
         socket_reader = conn.makefile('r')
         socket_writer = conn.makefile('w')
         # initialize mediator
-        pickle.dump((is_single_test, self.project), socket_writer)
+        mediator_settings = {
+            'is_single_test': is_single_test,
+            'testcase': self.project.testcase,
+            'solution': self.project.solution}
+        pickle.dump(mediator_settings, socket_writer)
         socket_writer.flush()
 
         # read standard error output of solution

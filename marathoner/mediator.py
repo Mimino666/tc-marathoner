@@ -27,13 +27,16 @@ class Mediator(object):
 
         self.socket_reader = self.sock.makefile('r')
         self.socket_writer = self.sock.makefile('w')
-        # receive project settings
-        self.is_single_test, self.project = pickle.load(self.socket_reader)
+        # receive settings
+        settings = pickle.load(self.socket_reader)
+        self.is_single_test = settings['is_single_test']
+        self.testcase = settings['testcase']
+        self.solution = settings['solution']
 
         # create the testcase file, if needed
         self.testcase_file = None
-        if self.is_single_test and self.project.testcase:
-            self.testcase_file = open(self.project.testcase, 'wb')
+        if self.is_single_test and self.testcase:
+            self.testcase_file = open(self.testcase, 'wb')
 
     def run(self):
         # start solution
@@ -44,7 +47,7 @@ class Mediator(object):
             si.wShowWindow = subprocess.SW_HIDE
 
         self.solution = subprocess.Popen(
-            self.project.solution,
+            self.solution,
             shell=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
