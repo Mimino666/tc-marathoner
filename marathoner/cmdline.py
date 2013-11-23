@@ -4,6 +4,8 @@ import shutil
 import sys
 
 import marathoner
+from marathoner.commands import collect_commands
+from marathoner.executor import Executor
 from marathoner.project import Project
 
 
@@ -29,6 +31,18 @@ def new_marathoner(args):
 
 def run_marathoner(args):
     project = Project(args[0] if args else '.')
+    executor = Executor(project)
+    commands = [cmd(project, executor) for cmd in collect_commands().itervalues()]
+    while True:
+        user_input = raw_input('>>> ').strip()
+        if not user_input:
+            continue
+        for cmd in commands:
+            if cmd.is_match(user_input):
+                cmd.handle(user_input, '')
+                break
+        else:
+            print 'Unrecognized command. Type "help" to see the list of available commands.'
 
 
 available_commands = {
