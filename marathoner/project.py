@@ -1,7 +1,8 @@
 from ConfigParser import SafeConfigParser
 from os import path
 
-from marathoner.contest.default import Contest
+from marathoner.contest.simple import Contest
+from marathoner.scores import Scores
 
 
 class ConfigError(Exception):
@@ -26,10 +27,12 @@ class Project(object):
     EXISTING_FILE_FIELDS = frozenset(['visualizer', 'solution', 'source'])
 
     def __init__(self, root_path='.'):
-        self.cfg_path = path.abspath(path.join(root_path, 'marathoner.cfg'))
+        self.project_dir = path.abspath(root_path)
+
+        # init cfg
+        self.cfg_path = path.join(self.project_dir, 'marathoner.cfg')
         if not path.exists(self.cfg_path):
             raise ConfigError('Unable to find marathoner.cfg file.')
-        # init cfg
         cfg = SafeConfigParser()
         cfg.read([self.cfg_path])
 
@@ -52,6 +55,7 @@ class Project(object):
 
         self.mediator = __import__('marathoner.mediator', fromlist=['mediator']).__file__
         self.mediator = path.splitext(self.mediator)[0] + '.py'
+        self.scores = Scores(self, path.join(self.project_dir, 'scores.txt'))
         self.contest = Contest(self)
 
     def clean_testcase(self, value):

@@ -1,28 +1,3 @@
-class Score(object):
-    '''Encapsulates score and run-time from the single test case.'''
-    def __init__(self, seed, score, run_time=None):
-        self.seed = seed
-        self.score = score
-        self.run_time = run_time
-
-    def __str__(self):
-        return '<Test-%s Score: %s Time: %s>' % (self.seed, self.score, self.time)
-
-    @classmethod
-    def better(cls, maximize, score1, score2):
-        '''Return better of the two scores.'''
-        # zero score is always bad
-        if not score1.score:
-            return score2
-        if not score2.score:
-            return score1
-
-        if maximize == (score1.score > score2.score):
-            return score1
-        else:
-            return score2
-
-
 class BaseContest(object):
     '''BaseContest's descendant classes are the place for contest specific
     modifications. It contains set of callback methods for different
