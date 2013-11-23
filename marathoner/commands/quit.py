@@ -12,6 +12,6 @@ class Command(BaseCommand):
     def is_match(self, command):
         return self.cmd_re.match(command)
 
-    def handle(self, command, vis_params):
+    def handle(self, command):
         print 'Bye bye...'
         sys.exit(0)

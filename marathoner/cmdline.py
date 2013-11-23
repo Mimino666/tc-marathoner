@@ -39,7 +39,7 @@ def run_marathoner(args):
             continue
         for cmd in commands:
             if cmd.is_match(user_input):
-                cmd.handle(user_input, '')
+                cmd.handle(user_input)
                 break
         else:
             print 'Unrecognized command. Type "help" to see the list of available commands.'

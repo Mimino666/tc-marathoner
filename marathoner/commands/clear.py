@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def is_match(self, command):
         return self.cmd_re.match(command)
 
-    def handle(self, command, vis_params):
+    def handle(self, command):
         if os.name == 'nt':
             os.system('cls')
         else:

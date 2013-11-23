@@ -10,5 +10,5 @@ class BaseCommand(object):
     def is_match(self, command):
         raise NotImplementedError()
 
-    def handle(self, command, vis_params):
+    def handle(self, command):
         pass

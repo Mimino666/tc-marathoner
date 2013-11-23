@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def is_match(self, command):
         return self.cmd_re.match(command)
 
-    def handle(self, command, vis_params):
+    def handle(self, command):
         lines = []
         for cmd_name, cmd in self.commands.iteritems():
             lines.append('  %-29s %s' % (cmd.syntax, cmd.help))
