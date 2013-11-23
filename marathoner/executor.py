@@ -57,18 +57,18 @@ class Executor(object):
         socket_writer.flush()
 
         # read standard error output of solution
-        solution_stderr_output = []
+        solution_stderr = []
         def solution_stderr_cb(line):
-            solution_stderr_output.append(line)
+            solution_stderr.append(line)
             if is_single_test or line[0] == '!':
                 sys.stdout.write(line)
         solution_stderr_reader = AsyncReader(socket_reader, solution_stderr_cb)
         solution_stderr_reader.start()
 
         # read standard output from visualizer
-        visualizer_stdout_output = []
+        visualizer_stdout = []
         def visualizer_stdout_cb(line):
-            visualizer_stdout_output.append(line)
+            visualizer_stdout.append(line)
         visualizer_stdout_reader = AsyncReader(visualizer.stdout, visualizer_stdout_cb)
         visualizer_stdout_reader.start()
 
@@ -88,7 +88,7 @@ class Executor(object):
         socket_writer.close()
         conn.close()
 
-        return (visualizer_stdout_output, solution_stderr_output)
+        return (visualizer_stdout, solution_stderr)
 
     def get_visualizer_params(self, seed, is_single_test, special_params):
         exec_params = [

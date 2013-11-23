@@ -1,7 +1,7 @@
 import re
 
-from . import collect_commands
-from .base import BaseCommand
+from marathoner.commands import collect_commands
+from marathoner.commands.base import BaseCommand
 
 
 class Command(BaseCommand):
