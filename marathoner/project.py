@@ -1,6 +1,8 @@
 from ConfigParser import SafeConfigParser
 from os import path
 
+from marathoner.contest.default import Contest
+
 
 class ConfigError(Exception):
     pass
@@ -50,6 +52,7 @@ class Project(object):
 
         self.mediator = __import__('marathoner.mediator', fromlist=['mediator']).__file__
         self.mediator = path.splitext(self.mediator)[0] + '.py'
+        self.contest = Contest(self)
 
     def clean_testcase(self, value):
         if value:

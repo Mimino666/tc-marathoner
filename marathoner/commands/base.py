@@ -5,6 +5,7 @@ class BaseCommand(object):
     def __init__(self, project, executor):
         self.project = project
         self.executor = executor
+        self.contest = project.contest
 
     def is_match(self, command):
         raise NotImplementedError()
