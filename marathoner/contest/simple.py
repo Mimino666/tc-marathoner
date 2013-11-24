@@ -47,22 +47,40 @@ class Contest(BaseContest):
 
     def multiple_tests_starting(self, num_tests):
         print 'Running %s tests...' % num_tests
+        self.sum_best = self.num_best = 0
+        self.sum_current = self.num_current = 0
 
     def one_test_starting(self, seed):
         pass
 
     def one_test_ending(self, seed, visualizer_stdout, solution_stderr, best_score, current_score):
+        self.sum_best += best_score.score
+        if best_score.score:
+            self.num_best += 1
+        self.sum_current += current_score.score
+        if current_score.score:
+            self.num_current += 1
+
+        seed_str = 'Seed %s:' % seed
+        run_time_str = 'Run time: %.2f' % current_score.run_time
+
         if not best_score.score or not current_score.score:
-            print 'Seed %s: Score: %.2f \tRun time: %.2f' % (seed, current_score.score, current_score.run_time)
+            score_str = 'Score: %.2f' % current_score.score
         else:
             if self.maximize:
                 ratio = 100.0 * (current_score.score - best_score.score) / best_score.score
             else:
                 ratio = 100.0 * (best_score.score - current_score.score) / best_score.score
+
             if ratio >= 0:
-                print 'Seed %s: Score: %.2f (+%.2f%%) \tRun time: %.2f' % (seed, current_score.score, ratio, current_score.run_time)
+                score_str = 'Score: %-9.2f (+%.2f%%)' % (current_score.score, ratio)
             else:
-                print 'Seed %s: Score: %.2f (%.2f%%) \tRun time: %.2f' % (seed, current_score.score, ratio, current_score.run_time)
+                score_str = 'Score: %-9.2f (%.2f%%)' % (current_score.score, ratio)
+
+        print '%-10s %-28s %s' % (seed_str, score_str, run_time_str)
 
     def multiple_tests_ending(self, num_tests):
-        pass
+        print
+        print 'Average new score for %s seeds: %.2f' % (self.num_current, self.sum_current / self.num_current)
+        if self.num_best:
+            print 'Average best score for %s seeds: %.2f' % (self.num_best, self.sum_best / self.num_best)
