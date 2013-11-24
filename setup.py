@@ -65,6 +65,7 @@ setup(
     packages=packages,
     package_data=package_data,
     scripts=scripts,
+    license=open('LICENSE', 'rb').read(),
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Programming Language :: Python',
