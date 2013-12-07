@@ -50,7 +50,7 @@ def run_marathoner(args):
 
 available_commands = {
     'new': (new_marathoner, '<project_name>', 'Create a new marathoner project.'),
-    'run': (run_marathoner, '[path_to_project]', 'Run marathoner from the current directory.')
+    'run': (run_marathoner, '[path_to_project]', 'Run marathoner project.')
 }
 
 
