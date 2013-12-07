@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, command):
         def _print(seed):
             seed_str = 'Seed %s:' % seed
-            score_str = '%f' % self.project.scores[seed].score
+            score_str = '%.2f' % self.project.scores[seed].score
             print '%-10s %s' % (seed_str, score_str)
 
         match = self.cmd_re.match(command)
