@@ -39,12 +39,12 @@ class Project(object):
 
         for field_name, required in self.FIELDS.iteritems():
             value = cfg.get('marathoner', field_name)
+            if not value and required:
+                raise ConfigError('Field "%s" in marathoner.cfg is required.' % field_name)
             # clean field value
             clean_func_name = 'clean_%s' % field_name
             if hasattr(self, clean_func_name):
                 value = getattr(self, clean_func_name)(value)
-            if value is None and required:
-                raise ConfigError('Field "%s" in marathoner.cfg is required.' % field_name)
             if value and field_name in self.EXISTING_FILE_FIELDS:
                 if not path.exists(value):
                     raise ConfigError('Field "%s" in marathoner.cfg is pointing to non-existent file: %s' %
