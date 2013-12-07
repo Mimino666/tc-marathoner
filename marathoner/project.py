@@ -28,6 +28,7 @@ class Project(object):
 
     def __init__(self, root_path='.'):
         self.project_dir = path.abspath(root_path)
+        self.project_name = path.basename(self.project_dir)
 
         # init cfg
         self.cfg_path = path.join(self.project_dir, 'marathoner.cfg')
