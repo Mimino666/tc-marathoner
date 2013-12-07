@@ -1,4 +1,5 @@
 from itertools import chain
+from os import path
 import re
 
 from marathoner.contest.base import BaseContest
@@ -47,20 +48,13 @@ class Contest(BaseContest):
 
     def multiple_tests_starting(self, num_tests):
         print 'Running %s tests...' % num_tests
-        self.sum_best = self.num_best = 0
-        self.sum_current = self.num_current = 0
+        log_filename = path.join(self.project.project_dir, 'multiple_tests.log')
+        self.log_file = open(log_filename, 'wb')
 
     def one_test_starting(self, seed):
         pass
 
     def one_test_ending(self, seed, visualizer_stdout, solution_stderr, best_score, current_score):
-        self.sum_best += best_score.score
-        if best_score.score:
-            self.num_best += 1
-        self.sum_current += current_score.score
-        if current_score.score:
-            self.num_current += 1
-
         seed_str = 'Seed %s:' % seed
         run_time_str = 'Run time: %.2f' % current_score.run_time
 
@@ -77,10 +71,10 @@ class Contest(BaseContest):
             else:
                 score_str = 'Score: %-9.2f (%.2f%%)' % (current_score.score, ratio)
 
-        print '%-10s %-28s %s' % (seed_str, score_str, run_time_str)
+        s = '%-10s %-28s %s' % (seed_str, score_str, run_time_str)
+        self.log_file.write(s + '\n')
+        self.log_file.flush()
+        print s
 
     def multiple_tests_ending(self, num_tests):
-        print
-        print 'Average new score for %s seeds: %.2f' % (self.num_current, self.sum_current / self.num_current)
-        if self.num_best:
-            print 'Average best score for %s seeds: %.2f' % (self.num_best, self.sum_best / self.num_best)
+        self.log_file.close()
