@@ -54,18 +54,24 @@ except ImportError:
     from distutils.core import setup
 
 
+with open('README.md') as f:
+    readme = f.read()
+with open('LICENSE') as f:
+    license = f.read()
+
+
 setup(
     name='marathoner',
     version=version,
     description='Testing tool for TopCoder marathon matches.',
-    long_description=open('README.md', 'rb').read(),
-    author='Michal "Mimino" Danilak',
+    long_description=readme,
+    author='Michal Mimino Danilak',
     author_email='michal.danilak@gmail.com',
     url='https://github.com/Mimino666/tc-marathoner',
     packages=packages,
     package_data=package_data,
     scripts=scripts,
-    license=open('LICENSE', 'rb').read(),
+    license=license,
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Programming Language :: Python',
