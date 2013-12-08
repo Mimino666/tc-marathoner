@@ -2,8 +2,8 @@ import threading
 
 
 class AsyncReader(threading.Thread):
-    '''Asynchronously read lines from the stream and call the callback for
-    each line.
+    '''Asynchronously read lines from the stream and call the callback function
+    for each line.
     '''
     def __init__(self, stream, cb):
         super(AsyncReader, self).__init__()
