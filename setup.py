@@ -73,15 +73,13 @@ setup(
     scripts=scripts,
     license=license,
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Operating System :: OS Independent',
         'Intended Audience :: Developers',
         'Environment :: Console',
-        'Topic :: Software Development :: Libraries :: Application Frameworks',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Internet :: WWW/HTTP',
+        'Topic :: Scientific/Engineering',
     ],
 )
