@@ -75,7 +75,7 @@ class Project(object):
             if path.exists(value) and not path.isfile(value):
                 raise ConfigError('Field "testcase" in marathoner.cfg is not pointing to a file: %s' % value)
             if path.exists(value):
-                print 'WARNING: File %s already exists and will be overwritten by testcase input.\n' % value
+                print 'WARNING: File %s already exists and will be overwritten by visualizer\'s input data.\n' % value
         return value
 
     def clean_maximize(self, value):

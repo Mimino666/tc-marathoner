@@ -34,8 +34,8 @@ def run_marathoner(args):
     executor = Executor(project)
     commands = [cmd(project, executor) for cmd in collect_commands().itervalues()]
 
-    print 'Welcome to marathoner! Type "help" for any help.'
-    print 'You are now working in project', project.project_name
+    print 'Welcome to Marathoner! Type "help" for any help.'
+    print 'You are now working on project', project.project_name
     while True:
         user_input = raw_input('>>> ').strip()
         if not user_input:
