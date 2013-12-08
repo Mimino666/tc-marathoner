@@ -55,5 +55,10 @@ class BaseContest(object):
         raise NotImplementedError()
 
     def multiple_tests_ending(self, num_tests):
-        '''Called after running the batch of tests.'''
+        '''Called after running the batch of tests.
+
+        @param num_tests: number of tests that actually ran. Can be lower
+                          than number of tests sent to `multiple_tests_starting()`,
+                          if user kills execution.
+        '''
         raise NotImplementedError()

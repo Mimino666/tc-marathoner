@@ -22,12 +22,17 @@ class Command(BaseCommand):
             return
 
         self.contest.multiple_tests_starting(seed2-seed1+1)
+        tests_run = 0
         for seed in xrange(seed1, seed2+1):
             self.contest.one_test_starting(seed)
             visualizer_stdout, solution_stderr = self.executor.run(seed, False, vis_params)
+            if self.executor.solution_killed:
+                print 'Stopping execution...'
+                break
             best_score = self.project.scores[seed]
             current_score = self.contest.extract_score(seed, visualizer_stdout, solution_stderr)
             self.project.scores[seed] = current_score
             self.contest.one_test_ending(seed, visualizer_stdout, solution_stderr, best_score, current_score)
+            tests_run += 1
         self.project.scores.save()
-        self.contest.multiple_tests_ending(seed2-seed1+1)
+        self.contest.multiple_tests_ending(tests_run)
