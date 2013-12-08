@@ -61,7 +61,6 @@ class Executor(object):
         self.socket_writer = conn.makefile('w')
         # initialize mediator
         mediator_settings = {
-            'is_single_test': is_single_test,
             'testcase': self.project.testcase,
             'solution': self.project.solution}
         pickle.dump(mediator_settings, self.socket_writer)

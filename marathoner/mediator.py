@@ -32,13 +32,12 @@ class Mediator(object):
         self.socket_writer = self.sock.makefile('w')
         # receive settings
         settings = pickle.load(self.socket_reader)
-        self.is_single_test = settings['is_single_test']
         self.testcase = settings['testcase']
         self.solution = settings['solution']
 
         # create the testcase file, if needed
         self.testcase_file = None
-        if self.is_single_test and self.testcase:
+        if self.testcase:
             self.testcase_file = open(self.testcase, 'wb')
 
     def run(self):
