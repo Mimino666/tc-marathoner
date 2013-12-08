@@ -8,7 +8,12 @@ class BaseCommand(object):
         self.contest = project.contest
 
     def is_match(self, command):
+        '''Given is the text that user typed into command line, return True
+        if this command should execute.
+        '''
         raise NotImplementedError()
 
     def handle(self, command):
-        pass
+        '''Given is the text that user typed into command line, execute the
+        command.
+        '''

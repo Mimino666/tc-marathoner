@@ -2,7 +2,7 @@ from os import path
 
 
 class Score(object):
-    '''Encapsulates score and run-time from the single test case.'''
+    '''Encapsulates score and run-time from the single test.'''
     def __init__(self, seed, score, run_time=None):
         self.seed = seed
         self.score = score
@@ -49,9 +49,7 @@ class Scores(object):
 
     @property
     def sorted_seeds(self):
-        seeds = self.best_scores.keys()
-        seeds.sort()
-        return seeds
+        return sorted(self.best_scores.keys())
 
     def save(self):
         with open(self.scores_file, 'wb') as f:

@@ -1,7 +1,6 @@
 class BaseContest(object):
-    '''BaseContest's descendant classes are the place for contest specific
-    modifications. It contains set of callback methods for different
-    phases (before/after) of different runs (single test/batch test).
+    '''BaseContest is an abstract class for contest-specific modifications to
+    Marathoner.
     '''
     def __init__(self, project):
         self.project = project
@@ -31,12 +30,12 @@ class BaseContest(object):
                            best_score, current_score):
         '''Called after the single test *successfully* finished.
 
-        @param best_score: best score for the current test case, until now.
+        @param best_score: best score for the current test, until now.
                 It has not been updated with current_score, so you can compare
                 old data with the new one. Will be automatically updated after.
         @type best_score: Score
 
-        @param current_score: score for the current test case
+        @param current_score: score for the current test
         @type current_score: Score
         '''
         raise NotImplementedError()

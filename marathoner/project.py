@@ -1,4 +1,5 @@
 from ConfigParser import SafeConfigParser
+import os
 from os import path
 
 from marathoner.contest.simple import Contest
@@ -24,14 +25,14 @@ class Project(object):
     }
 
     # fields, that should point to existing files
-    EXISTING_FILE_FIELDS = frozenset(['visualizer', 'solution', 'source'])
+    EXISTING_FILE_FIELDS = frozenset(['visualizer', 'source'])
 
     def __init__(self, root_path='.'):
         self.project_dir = path.abspath(root_path)
         self.project_name = path.basename(self.project_dir)
 
         # init cfg
-        self.cfg_path = path.join(self.project_dir, 'marathoner.cfg')
+        self.cfg_path = self.data_path('marathoner.cfg')
         if not path.exists(self.cfg_path):
             raise ConfigError('Unable to find marathoner.cfg file.')
         cfg = SafeConfigParser()
@@ -56,8 +57,18 @@ class Project(object):
 
         self.mediator = __import__('marathoner.mediator', fromlist=['mediator']).__file__
         self.mediator = path.splitext(self.mediator)[0] + '.py'
-        self.scores = Scores(self, path.join(self.project_dir, 'scores.txt'))
+        self.scores = Scores(self, self.data_path('scores.txt'))
         self.contest = Contest(self)
+
+    def data_path(self, path_, create_dirs=False):
+        '''If path is relative, return the given path inside the project dir,
+        otherwise return the path unmodified.
+        '''
+        if not path.isabs(path_):
+            path_ = path.join(self.project_dir, path_)
+        if create_dirs and not path.exists(path_):
+            os.makedirs(path_)
+        return path_
 
     def clean_testcase(self, value):
         if value:
