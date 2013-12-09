@@ -95,9 +95,6 @@ def execute(argv=None):
         print '\nUsage:'
         print_usage(cmd_name, help=False)
         sys.exit(2)
-    except Exception as e:
-        print e
-        sys.exit(2)
 
 
 if __name__ == '__main__':
