@@ -92,6 +92,7 @@ class Mediator(object):
             self.testcase_file.close()
         self.socket_reader.close()
         self.socket_writer.close()
+        self.sock.shutdown(socket.SHUT_RDWR)
         self.sock.close()
 
     def _visualizer_input_cb(self, line):
