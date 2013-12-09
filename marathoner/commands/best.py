@@ -1,5 +1,8 @@
 import re
 
+from six import print_
+from six.moves import xrange
+
 from marathoner.commands.base import BaseCommand
 
 
@@ -15,7 +18,7 @@ class Command(BaseCommand):
         def _print(seed):
             seed_str = 'Seed %s:' % seed
             score_str = '%.2f' % self.project.scores[seed].score
-            print '%-10s %s' % (seed_str, score_str)
+            print_('%-10s %s' % (seed_str, score_str))
 
         match = self.cmd_re.match(command)
 
@@ -32,7 +35,7 @@ class Command(BaseCommand):
             seed1 = int(match.group(1))
             seed2 = int(match.group(2))
             if seed2 < seed1:
-                print 'Error: seed1 can\'t be larger than seed2!'
+                print_('Error: seed1 can\'t be larger than seed2!')
                 return
             for seed in xrange(seed1, seed2+1):
                 _print(seed)

@@ -57,8 +57,8 @@ class Executor(object):
 
         # accept connection from mediator
         conn, addr = self.sock.accept()
-        self.socket_reader = conn.makefile('r')
-        self.socket_writer = conn.makefile('w')
+        self.socket_reader = conn.makefile('rb')
+        self.socket_writer = conn.makefile('wb')
         # initialize mediator
         mediator_settings = {
             'testcase': self.project.testcase,
@@ -102,7 +102,7 @@ class Executor(object):
             '-exec', 'python ' + self.project.mediator,
             self.project.vis if is_single_test else self.project.novis]
         special_params = special_params.split()
-        seed_params = ['-seed', str(seed)]
+        seed_params = ['-seed', '%s' % seed]
 
         return exec_params + self.project.params + special_params + seed_params
 
@@ -118,6 +118,7 @@ class Executor(object):
         For single tests, output it real-time.
         For multi tests, output only lines starting with "!".
         '''
+        line = line.decode('utf-8')
         self.solution_stderr.append(line)
         if self.is_single_test or line[0] == '!':
             sys.stdout.write(line)

@@ -1,6 +1,8 @@
 from itertools import chain
 import re
 
+from six import print_
+
 from marathoner.contest.base import BaseContest
 from marathoner.scores import Score
 
@@ -23,15 +25,15 @@ class Contest(BaseContest):
         return Score(seed, score, run_time)
 
     def single_test_starting(self, seed):
-        print 'Running single test %s...' % seed
+        print_('Running single test %s...' % seed)
 
     def single_test_ending(self, seed, visualizer_stdout, solution_stderr, best_score, current_score):
         for line in visualizer_stdout:
-            print line.rstrip()
+            print_(line.rstrip())
 
-        print '\tRun time: %f' % current_score.run_time
-        print '\tNew score: %f' % current_score.score
-        print '\tOld score: %f' % best_score.score
+        print_('\tRun time: %f' % current_score.run_time)
+        print_('\tNew score: %f' % current_score.score)
+        print_('\tOld score: %f' % best_score.score)
 
         if not best_score.score or not current_score.score:
             return
@@ -41,15 +43,15 @@ class Contest(BaseContest):
         else:
             ratio = 100.0 * (best_score.score - current_score.score) / best_score.score
         if ratio >= 0:
-            print '\t+%.2f%% better' % ratio
+            print_('\t+%.2f%% better' % ratio)
         else:
-            print '\t%.2f%% worse' % ratio
+            print_('\t%.2f%% worse' % ratio)
 
 
     def multiple_tests_starting(self, num_tests):
-        print 'Running %s tests...' % num_tests
+        print_('Running %s tests...' % num_tests)
         log_filename = self.project.data_path('multiple_tests.log')
-        self.log_file = open(log_filename, 'wb')
+        self.log_file = open(log_filename, 'w')
 
     def one_test_starting(self, seed):
         pass
@@ -74,7 +76,7 @@ class Contest(BaseContest):
         s = '%-10s %-28s %s' % (seed_str, score_str, run_time_str)
         self.log_file.write(s + '\n')
         self.log_file.flush()
-        print s
+        print_(s)
 
     def multiple_tests_ending(self, num_tests):
         self.log_file.close()

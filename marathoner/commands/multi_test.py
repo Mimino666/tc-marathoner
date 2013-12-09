@@ -1,5 +1,8 @@
 import re
 
+from six import print_
+from six.moves import xrange
+
 from marathoner.commands.base import BaseCommand
 
 
@@ -18,7 +21,7 @@ class Command(BaseCommand):
         vis_params = match.group(3) or ''
 
         if seed2 < seed1:
-            print 'Error: seed1 can\'t be larger than seed2!'
+            print_('Error: seed1 can\'t be larger than seed2!')
             return
 
         self.contest.multiple_tests_starting(seed2-seed1+1)
@@ -27,7 +30,7 @@ class Command(BaseCommand):
             self.contest.one_test_starting(seed)
             visualizer_stdout, solution_stderr = self.executor.run(seed, False, vis_params)
             if self.executor.solution_killed:
-                print 'Stopping execution...'
+                print_('Stopping execution...')
                 break
             best_score = self.project.scores[seed]
             current_score = self.contest.extract_score(seed, visualizer_stdout, solution_stderr)

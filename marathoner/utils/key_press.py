@@ -69,26 +69,29 @@ def test_keypress():
     '''Above code is very platform specific and hackish. We'd better test it.
     '''
     import threading
+    from six import print_
+    from six.moves import input
+
     kill_event = threading.Event()
 
     was_received = [False]
     def received():
         was_received[0] = True
 
-    print 'You have 5 seconds to press "q". Go for it...'
+    print_('You have 5 seconds to press "q". Go for it...')
     thread = threading.Thread(target=get_key_press, args=['q', kill_event, received])
     thread.start()
     thread.join(5.0)
     kill_event.set()
 
     if was_received[0]:
-        print 'You have managed to press "q". Congratulations!'
+        print_('You have managed to press "q". Congratulations!')
     else:
-        print 'You didn\'t press "q". What is wrong with you?!'
+        print_('You didn\'t press "q". What is wrong with you?!')
 
     # test that stdin is working as expected
-    name = raw_input('What is your name? ')
-    print 'Your name is:', name
+    name = input('What is your name? ')
+    print_('Your name is:', name)
 
 
 if __name__ == '__main__':

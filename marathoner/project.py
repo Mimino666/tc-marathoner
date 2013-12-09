@@ -1,6 +1,8 @@
-from ConfigParser import SafeConfigParser
 import os
 from os import path
+
+from six import print_, iteritems
+from six.moves import configparser
 
 from marathoner.contest.simple import Contest
 from marathoner.scores import Scores
@@ -35,10 +37,10 @@ class Project(object):
         self.cfg_path = self.data_path('marathoner.cfg')
         if not path.exists(self.cfg_path):
             raise ConfigError('Unable to find marathoner.cfg file.')
-        cfg = SafeConfigParser()
+        cfg = configparser.SafeConfigParser()
         cfg.read([self.cfg_path])
 
-        for field_name, required in self.FIELDS.iteritems():
+        for field_name, required in iteritems(self.FIELDS):
             value = cfg.get('marathoner', field_name)
             if not value and required:
                 raise ConfigError('Field "%s" in marathoner.cfg is required.' % field_name)
@@ -75,7 +77,7 @@ class Project(object):
             if path.exists(value) and not path.isfile(value):
                 raise ConfigError('Field "testcase" in marathoner.cfg is not pointing to a file: %s' % value)
             if path.exists(value):
-                print 'WARNING: File %s already exists and will be overwritten by visualizer\'s input data.\n' % value
+                print_('WARNING: File %s already exists and will be overwritten by visualizer\'s input data.\n' % value)
         return value
 
     def clean_maximize(self, value):

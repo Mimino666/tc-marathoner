@@ -33,7 +33,7 @@ class Scores(object):
         self.best_scores = {}
         # read scores from the file
         if path.exists(scores_file):
-            with open(scores_file, 'rb') as f:
+            with open(scores_file, 'r') as f:
                 for line in f:
                     seed, score = line.split(':')
                     seed = int(seed)
@@ -52,7 +52,7 @@ class Scores(object):
         return sorted(self.best_scores.keys())
 
     def save(self):
-        with open(self.scores_file, 'wb') as f:
+        with open(self.scores_file, 'w') as f:
             for seed in self.sorted_seeds:
                 score = self.best_scores[seed]
                 f.write('%d: %f\n' % (score.seed, score.score))

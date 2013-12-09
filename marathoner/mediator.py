@@ -18,6 +18,8 @@ import socket
 import subprocess
 import sys
 
+from six import iteritems
+
 from marathoner import MARATHONER_PORT
 from marathoner.utils.async_reader import AsyncReader
 
@@ -28,8 +30,8 @@ class Mediator(object):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect(('127.0.0.1', MARATHONER_PORT))
 
-        self.socket_reader = self.sock.makefile('r')
-        self.socket_writer = self.sock.makefile('w')
+        self.socket_reader = self.sock.makefile('rb')
+        self.socket_writer = self.sock.makefile('wb')
         # receive settings
         settings = pickle.load(self.socket_reader)
         self.testcase = settings['testcase']
@@ -38,7 +40,7 @@ class Mediator(object):
         # create the testcase file, if needed
         self.testcase_file = None
         if self.testcase:
-            self.testcase_file = open(self.testcase, 'wb')
+            self.testcase_file = open(self.testcase, 'w')
 
     def run(self):
         # start solution
@@ -76,7 +78,7 @@ class Mediator(object):
         # return code from solution
         code = self.solution_proc.poll()
         if code:
-            signal_name = dict((k, v) for v, k in signal.__dict__.iteritems()
+            signal_name = dict((k, v) for v, k in iteritems(signal.__dict__)
                                       if v.startswith('SIG')) \
                           .get(code, '')
             if signal_name:
@@ -84,7 +86,7 @@ class Mediator(object):
             else:
                 s = '%s' % code
             msg = 'WARNING: Your solution ended with non-zero return value: %s\n' % s
-            self.socket_writer.write(msg)
+            self.socket_writer.write(msg.encode('utf-8'))
             self.socket_writer.flush()
 
         # close the resources
@@ -116,7 +118,7 @@ class Mediator(object):
         '''Read standard error output from the solution and redirect it back to
         Marathoner.
         '''
-        self.socket_writer.write(line)
+        self.socket_writer.write(line.encode('utf-8'))
         self.socket_writer.flush()
 
 

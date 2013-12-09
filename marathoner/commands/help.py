@@ -1,5 +1,7 @@
 import re
 
+from six import print_, iteritems
+
 from marathoner.commands import collect_commands
 from marathoner.commands.base import BaseCommand
 
@@ -18,8 +20,8 @@ class Command(BaseCommand):
 
     def handle(self, command):
         lines = []
-        for cmd_name, cmd in self.commands.iteritems():
+        for cmd_name, cmd in iteritems(self.commands):
             lines.append('  %-29s %s' % (cmd.syntax, cmd.help))
         lines.sort()
         for line in lines:
-            print line
+            print_(line)

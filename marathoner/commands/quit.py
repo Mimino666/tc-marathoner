@@ -1,6 +1,8 @@
 import re
 import sys
 
+from six import print_
+
 from marathoner.commands.base import BaseCommand
 
 
@@ -13,5 +15,5 @@ class Command(BaseCommand):
         return self.cmd_re.match(command)
 
     def handle(self, command):
-        print 'Bye bye...'
+        print_('Bye bye...')
         sys.exit(0)
