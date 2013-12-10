@@ -18,6 +18,8 @@ class Command(BaseCommand):
 
         self.contest.single_test_starting(seed)
         visualizer_stdout, solution_stderr = self.executor.run(seed, True, vis_params)
+        if self.executor.solution_crashed or self.executor.solution_killed:
+            return
         best_score = self.project.scores[seed]
         current_score = self.contest.extract_score(seed, visualizer_stdout, solution_stderr)
         self.project.scores[seed] = current_score

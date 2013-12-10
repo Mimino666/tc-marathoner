@@ -29,7 +29,7 @@ class Command(BaseCommand):
         for seed in xrange(seed1, seed2+1):
             self.contest.one_test_starting(seed)
             visualizer_stdout, solution_stderr = self.executor.run(seed, False, vis_params)
-            if self.executor.solution_killed:
+            if self.executor.solution_crashed or self.executor.solution_killed:
                 print_('Stopping execution...')
                 break
             best_score = self.project.scores[seed]

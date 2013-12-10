@@ -6,17 +6,21 @@ import subprocess
 import sys
 import threading
 
+from six import print_
+
 from marathoner import MARATHONER_PORT
 from marathoner.utils.async_reader import AsyncReader
 from marathoner.utils.key_press import get_key_press
+from marathoner.utils.signal import get_signal_name
 
 
 class Executor(object):
     def __init__(self, project):
         self.project = project
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.settimeout(1)
         self.sock.bind(('127.0.0.1', MARATHONER_PORT))
-        self.sock.listen(0)
+        self.sock.listen(1)
 
     def __del__(self):
         self.sock.close()
@@ -36,6 +40,8 @@ class Executor(object):
         @type special_params: string
         '''
         self.is_single_test = is_single_test
+        self.solution_killed = False
+        self.solution_crashed = False
         self.solution_stderr, self.visualizer_stdout = [], []
 
         # start visualizer
@@ -56,7 +62,20 @@ class Executor(object):
             startupinfo=si)
 
         # accept connection from mediator
-        conn, addr = self.sock.accept()
+        while visualizer.poll() is None:
+            try:
+                conn, addr = self.sock.accept()
+            except socket.timeout:
+                pass
+            else:
+                conn.settimeout(None)
+                break
+        else:
+            code = visualizer.poll()
+            print_('WARNING: Visualizer ended with non-zero code:', get_signal_name(code))
+            self.solution_crashed = True
+            return ([], [])
+
         self.socket_reader = conn.makefile('rb')
         self.socket_writer = conn.makefile('wb')
         # initialize mediator
@@ -75,7 +94,6 @@ class Executor(object):
         visualizer_stderr_reader.start()
 
         # check for kill signal from user
-        self.solution_killed = False
         self.kill_event = threading.Event()
         kill_solution = threading.Thread(target=get_key_press,
                                          args=['q', self.kill_event, self._kill_solution_cb])
@@ -119,6 +137,8 @@ class Executor(object):
         For multi tests, output only lines starting with "!".
         '''
         line = line.decode('utf-8')
+        if line.startswith('!WARNING:'):
+            self.solution_crashed = True
         self.solution_stderr.append(line)
         if self.is_single_test or line[0] == '!':
             sys.stdout.write(line)

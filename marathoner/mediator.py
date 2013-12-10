@@ -13,15 +13,13 @@ This injection hack allows to:
 '''
 import pickle
 import shlex
-import signal
 import socket
 import subprocess
 import sys
 
-from six import iteritems
-
 from marathoner import MARATHONER_PORT
 from marathoner.utils.async_reader import AsyncReader
+from marathoner.utils.signal import get_signal_name
 
 
 class Mediator(object):
@@ -78,14 +76,7 @@ class Mediator(object):
         # return code from solution
         code = self.solution_proc.poll()
         if code:
-            signal_name = dict((k, v) for v, k in iteritems(signal.__dict__)
-                                      if v.startswith('SIG')) \
-                          .get(code, '')
-            if signal_name:
-                s = '%s (%s)' % (code, signal_name)
-            else:
-                s = '%s' % code
-            msg = 'WARNING: Your solution ended with non-zero return value: %s\n' % s
+            msg = '!WARNING: Your solution ended with non-zero code: %s\n' % get_signal_name(code)
             self.socket_writer.write(msg.encode('utf-8'))
             self.socket_writer.flush()
 
