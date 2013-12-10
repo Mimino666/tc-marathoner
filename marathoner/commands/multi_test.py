@@ -26,6 +26,7 @@ class Command(BaseCommand):
 
         self.contest.multiple_tests_starting(seed2-seed1+1)
         tests_run = 0
+        self.executor.kill_solution_start()
         for seed in xrange(seed1, seed2+1):
             self.contest.one_test_starting(seed)
             visualizer_stdout, solution_stderr = self.executor.run(seed, False, vis_params)
@@ -37,5 +38,6 @@ class Command(BaseCommand):
             self.project.scores[seed] = current_score
             self.contest.one_test_ending(seed, visualizer_stdout, solution_stderr, best_score, current_score)
             tests_run += 1
+        self.executor.kill_solution_stop()
         self.project.scores.save()
         self.contest.multiple_tests_ending(tests_run)

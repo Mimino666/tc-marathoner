@@ -17,7 +17,9 @@ class Command(BaseCommand):
         vis_params = match.group(2) or ''
 
         self.contest.single_test_starting(seed)
+        self.executor.kill_solution_start()
         visualizer_stdout, solution_stderr = self.executor.run(seed, True, vis_params)
+        self.executor.kill_solution_stop()
         if self.executor.solution_crashed or self.executor.solution_killed:
             return
         best_score = self.project.scores[seed]

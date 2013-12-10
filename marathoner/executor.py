@@ -21,6 +21,7 @@ class Executor(object):
         self.sock.settimeout(1)
         self.sock.bind(('127.0.0.1', MARATHONER_PORT))
         self.sock.listen(1)
+        self.kill_solution = None
 
     def __del__(self):
         self.sock.close()
@@ -93,19 +94,11 @@ class Executor(object):
         visualizer_stdout_reader.start()
         visualizer_stderr_reader.start()
 
-        # check for kill signal from user
-        self.kill_event = threading.Event()
-        kill_solution = threading.Thread(target=get_key_press,
-                                         args=['q', self.kill_event, self._kill_solution_cb])
-        kill_solution.start()
-
         # wait for readers to finish
         solution_stderr_reader.join()
         visualizer_stdout_reader.join()
         visualizer_stderr_reader.join()
-
-        self.kill_event.set()
-        kill_solution.join()
+        self.solution_pid = None
 
         # close the resources
         self.socket_reader.close()
@@ -124,12 +117,23 @@ class Executor(object):
 
         return exec_params + self.project.params + special_params + seed_params
 
+    def kill_solution_start(self):
+        self.kill_event = threading.Event()
+        self.kill_solution= threading.Thread(target=get_key_press,
+                                             args=['q', self.kill_event, self._kill_solution_cb])
+        self.kill_solution.start()
+
+    def kill_solution_stop(self):
+        self.kill_event.set()
+        self.kill_solution.join()
+
     def _kill_solution_cb(self):
-        self.solution_killed = True
         try:
-            os.kill(self.solution_pid, signal.SIGTERM)
+            if self.solution_pid:
+                os.kill(self.solution_pid, signal.SIGTERM)
         except:
             pass
+        self.solution_killed = True
 
     def _solution_stderr_cb(self, line):
         '''Read standard error output of solution and store it locally.
