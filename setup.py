@@ -71,6 +71,9 @@ setup(
     packages=packages,
     package_data=package_data,
     scripts=scripts,
+    install_requires=[
+        'six',
+    ],
     license=license,
     classifiers=[
         'Development Status :: 4 - Beta',
