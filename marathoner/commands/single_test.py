@@ -22,8 +22,8 @@ class Command(BaseCommand):
         self.executor.kill_solution_stop()
         if self.executor.solution_crashed or self.executor.solution_killed:
             return
-        best_score = self.project.scores[seed]
         current_score = self.contest.extract_score(seed, visualizer_stdout, solution_stderr)
         self.project.scores[seed] = current_score
         self.project.scores.save()
-        self.contest.single_test_ending(seed, visualizer_stdout, solution_stderr, best_score, current_score)
+        self.contest.single_test_ending(seed, visualizer_stdout, solution_stderr,
+                                        self.project.scores[seed], current_score)

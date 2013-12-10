@@ -30,9 +30,8 @@ class BaseContest(object):
                            best_score, current_score):
         '''Called after the single test *successfully* finished.
 
-        @param best_score: best score for the current test, until now.
-                It has not been updated with current_score, so you can compare
-                old data with the new one. Will be automatically updated after.
+        @param best_score: best score for the current test. Updated with the
+                           `current_score` already.
         @type best_score: Score
 
         @param current_score: score for the current test

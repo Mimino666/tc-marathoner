@@ -19,7 +19,7 @@ Features
 Installation
 ------------
 
-Get Python 2.6 or 2.7 at [http://www.python.org](http://www.python.org).
+Get Python at [http://www.python.org](http://www.python.org) (versions 2.6, 2.7 and 3.x are supported).
 
 If you have *pip* Python package manager installed, run: ```pip install marathoner```.
 
@@ -64,9 +64,9 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [Colo
    Running single test 1...
    Score = 123456.0
            Run time: 0.146289
-           New score: 123456.000000
-           Old score: 1234567.000000
-           +90,00% better
+           New score: 1234567.000000
+           Best score: 123456.000000
+           Relative score: 0.0999994
    ```
    You should see the visualization for the seed number 1. Close the visualizer and type another command.
 

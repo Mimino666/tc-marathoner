@@ -33,50 +33,42 @@ class Contest(BaseContest):
 
         print_('\tRun time: %f' % current_score.run_time)
         print_('\tNew score: %f' % current_score.score)
-        print_('\tOld score: %f' % best_score.score)
-
-        if not best_score.score or not current_score.score:
-            return
-
-        if self.maximize:
-            ratio = 100.0 * (current_score.score - best_score.score) / best_score.score
-        else:
-            ratio = 100.0 * (best_score.score - current_score.score) / best_score.score
-        if ratio >= 0:
-            print_('\t+%.2f%% better' % ratio)
-        else:
-            print_('\t%.2f%% worse' % ratio)
+        print_('\tBest score: %f' % best_score.score)
+        print_('\tRelative score: %f' % self._get_relative_score(best_score, current_score))
 
 
     def multiple_tests_starting(self, num_tests):
         print_('Running %s tests...' % num_tests)
         log_filename = self.project.data_path('multiple_tests.log')
         self.log_file = open(log_filename, 'w')
+        self.score_sum = 0
 
     def one_test_starting(self, seed):
         pass
 
     def one_test_ending(self, seed, visualizer_stdout, solution_stderr, best_score, current_score):
+        relative = self._get_relative_score(best_score, current_score)
+        self.score_sum += relative
+
         seed_str = 'Seed %s:' % seed
+        score_str = 'Score: %.2f' % current_score.score
+        best_str = 'Best: %.2f' % best_score.score
+        relative_str = 'Rel.: %.3f' % relative
         run_time_str = 'Run time: %.2f' % current_score.run_time
 
-        if not best_score.score or not current_score.score:
-            score_str = 'Score: %.2f' % current_score.score
-        else:
-            if self.maximize:
-                ratio = 100.0 * (current_score.score - best_score.score) / best_score.score
-            else:
-                ratio = 100.0 * (best_score.score - current_score.score) / best_score.score
-
-            if ratio >= 0:
-                score_str = 'Score: %-9.2f (+%.2f%%)' % (current_score.score, ratio)
-            else:
-                score_str = 'Score: %-9.2f (%.2f%%)' % (current_score.score, ratio)
-
-        s = '%-10s %-28s %s' % (seed_str, score_str, run_time_str)
+        s = '%-10s %-17s %-16s %-13s %s' % (seed_str, score_str, best_str, relative_str, run_time_str)
         self.log_file.write(s + '\n')
         self.log_file.flush()
         print_(s)
 
     def multiple_tests_ending(self, num_tests):
         self.log_file.close()
+        print_('Your relative score on %s tests is %.5f' % (num_tests, self.score_sum))
+
+    def _get_relative_score(self, best_score, current_score):
+        if not current_score.score:
+            return 0.0
+        if self.maximize:
+            return current_score.score / max(best_score.score, best_score.score)
+        else:
+            return min(best_score.score, current_score.score) / current_score.score
