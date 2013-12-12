@@ -2,7 +2,6 @@ import os
 import pickle
 import signal
 import socket
-import subprocess
 import sys
 import threading
 
@@ -12,6 +11,7 @@ from marathoner import MARATHONER_PORT
 from marathoner.utils.async_reader import AsyncReader
 from marathoner.utils.key_press import get_key_press
 from marathoner.utils.ossignal import get_signal_name, install_shutdown_handlers
+from marathoner.utils.proc import start_process
 
 
 class Executor(object):
@@ -52,20 +52,7 @@ class Executor(object):
 
         # start visualizer
         params = self.get_visualizer_params(seed, is_single_test, special_params)
-        si = None
-        if hasattr(subprocess, 'STARTUPINFO'):
-            si = subprocess.STARTUPINFO()
-            si.dwFlags = subprocess.STARTF_USESHOWWINDOW
-            si.wShowWindow = subprocess.SW_HIDE
-        self.visualizer_proc = subprocess.Popen(
-            params,
-            shell=False,
-            bufsize=1,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-            universal_newlines=True,
-            startupinfo=si)
+        self.visualizer_proc = start_process(params)
 
         # accept connection from mediator
         while self.visualizer_proc.poll() is None:

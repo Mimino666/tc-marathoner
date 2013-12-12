@@ -1,11 +1,15 @@
 import os
 from os import path
+import shlex
+import time
 
 from six import print_, iteritems
 from six.moves import configparser
 
 from marathoner.contest.simple import Contest
 from marathoner.scores import Scores
+from marathoner.utils.ossignal import get_signal_name
+from marathoner.utils.proc import start_process
 
 
 class ConfigError(Exception):
@@ -71,6 +75,29 @@ class Project(object):
         if create_dirs and not path.exists(path_):
             os.makedirs(path_)
         return path_
+
+    def clean_solution(self, value):
+        parsed_value = shlex.split(value)
+        # try to run the solution to check if it works
+        try:
+            solution_proc = start_process(parsed_value)
+        except:
+            raise ConfigError('Field "solution" in marathoner.cfg is not properly configured. '
+                              'Try to copy it and run it from the command line. '
+                              'Did it do something? '
+                              'It is supposed to start your solution program.')
+
+        time.sleep(0.5)
+        code = solution_proc.poll()
+        if code:
+            raise ConfigError('Your solution program doesn\'t work. '
+                              'When we run it, it ends with non-zero code: %s' % get_signal_name(code))
+        elif code is not None:
+            raise ConfigError('Your solution program doesn\'t work. '
+                              'When we run it, it immediatelly ends.')
+
+        solution_proc.kill()
+        return parsed_value
 
     def clean_testcase(self, value):
         if value:

@@ -12,14 +12,13 @@ This injection hack allows to:
     (when it gets stuck, for example)
 '''
 import pickle
-import shlex
 import socket
-import subprocess
 import sys
 
 from marathoner import MARATHONER_PORT
 from marathoner.utils.async_reader import AsyncReader
 from marathoner.utils.ossignal import get_signal_name
+from marathoner.utils.proc import start_process
 
 
 class Mediator(object):
@@ -41,22 +40,7 @@ class Mediator(object):
             self.testcase_file = open(self.testcase, 'w')
 
     def run(self):
-        # start solution
-        si = None
-        if hasattr(subprocess, 'STARTUPINFO'):
-            si = subprocess.STARTUPINFO()
-            si.dwFlags = subprocess.STARTF_USESHOWWINDOW
-            si.wShowWindow = subprocess.SW_HIDE
-
-        self.solution_proc = subprocess.Popen(
-            shlex.split(self.solution),
-            shell=False,  # don't set to True, otherwise it is impossible to kill it
-            bufsize=1,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-            universal_newlines=True,
-            startupinfo=si)
+        self.solution_proc = start_process(self.solution)
         pickle.dump(self.solution_proc.pid, self.socket_writer)
         self.socket_writer.flush()
 
