@@ -7,7 +7,7 @@ class Command(BaseCommand):
     syntax = '<seed> [vis params]'
     help = 'run single test with visualization'
 
-    cmd_re = re.compile(r'^\s*(\d+)\s*([^\d\s].*)?\s*$')
+    cmd_re = re.compile(r'^\s*(\d+)(?:\s+([^\d\s].*))?\s*$', re.IGNORECASE)
     def is_match(self, command):
         return self.cmd_re.match(command)
 

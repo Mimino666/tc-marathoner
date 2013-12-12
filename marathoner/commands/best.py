@@ -10,7 +10,7 @@ class Command(BaseCommand):
     syntax = 'best [seed1] [seed2]'
     help = 'print best score for the selected seeds'
 
-    cmd_re = re.compile(r'^\s*best\s*(\d+)?\s*(\d+)?\s*$')
+    cmd_re = re.compile(r'^\s*best(?:\s+(\d+)(?:\s+(\d+))?)?\s*$', re.IGNORECASE)
     def is_match(self, command):
         return self.cmd_re.match(command)
 

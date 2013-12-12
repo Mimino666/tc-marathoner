@@ -14,7 +14,7 @@ class Command(BaseCommand):
         super(Command, self).__init__(*args, **kwargs)
         self.commands = collect_commands()
 
-    cmd_re = re.compile(r'^\s*help\s*$')
+    cmd_re = re.compile(r'^\s*help\s*$', re.IGNORECASE)
     def is_match(self, command):
         return self.cmd_re.match(command)
 

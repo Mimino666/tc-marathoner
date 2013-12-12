@@ -8,7 +8,7 @@ class Command(BaseCommand):
     syntax = 'clear'
     help = 'clear console window'
 
-    cmd_re = re.compile(r'^\s*clear\s*$')
+    cmd_re = re.compile(r'^\s*clear\s*$', re.IGNORECASE)
     def is_match(self, command):
         return self.cmd_re.match(command)
 
