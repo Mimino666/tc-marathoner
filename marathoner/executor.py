@@ -11,7 +11,7 @@ from six import print_
 from marathoner import MARATHONER_PORT
 from marathoner.utils.async_reader import AsyncReader
 from marathoner.utils.key_press import get_key_press
-from marathoner.utils.signal import get_signal_name
+from marathoner.utils.ossignal import get_signal_name, install_shutdown_handlers
 
 
 class Executor(object):
@@ -21,10 +21,15 @@ class Executor(object):
         self.sock.settimeout(1)
         self.sock.bind(('127.0.0.1', MARATHONER_PORT))
         self.sock.listen(1)
-        self.kill_solution = None
+        install_shutdown_handlers(self.shutdown_handler)
 
     def __del__(self):
         self.sock.close()
+
+    def clean(self):
+        self.visualizer_proc = None
+        self.solution_pid = None
+        self.socket_reader = self.socket_writer = None
 
     def run(self, seed, is_single_test, special_params=''):
         '''Run visualizer on the chosen seed number.
@@ -52,7 +57,7 @@ class Executor(object):
             si = subprocess.STARTUPINFO()
             si.dwFlags = subprocess.STARTF_USESHOWWINDOW
             si.wShowWindow = subprocess.SW_HIDE
-        visualizer = subprocess.Popen(
+        self.visualizer_proc = subprocess.Popen(
             params,
             shell=False,
             bufsize=1,
@@ -63,7 +68,7 @@ class Executor(object):
             startupinfo=si)
 
         # accept connection from mediator
-        while visualizer.poll() is None:
+        while self.visualizer_proc.poll() is None:
             try:
                 conn, addr = self.sock.accept()
             except socket.timeout:
@@ -72,9 +77,10 @@ class Executor(object):
                 conn.settimeout(None)
                 break
         else:
-            code = visualizer.poll()
+            code = self.visualizer_proc.poll()
             print_('WARNING: Visualizer ended with non-zero code:', get_signal_name(code))
             self.solution_crashed = True
+            self.clean()
             return ([], [])
 
         self.socket_reader = conn.makefile('rb')
@@ -88,8 +94,8 @@ class Executor(object):
         self.solution_pid = pickle.load(self.socket_reader)
 
         solution_stderr_reader = AsyncReader(self.socket_reader, self._solution_stderr_cb)
-        visualizer_stdout_reader = AsyncReader(visualizer.stdout, self._visualizer_stdout_cb)
-        visualizer_stderr_reader = AsyncReader(visualizer.stderr, self._visualizer_stderr_cb)
+        visualizer_stdout_reader = AsyncReader(self.visualizer_proc.stdout, self._visualizer_stdout_cb)
+        visualizer_stderr_reader = AsyncReader(self.visualizer_proc.stderr, self._visualizer_stderr_cb)
         solution_stderr_reader.start()
         visualizer_stdout_reader.start()
         visualizer_stderr_reader.start()
@@ -98,14 +104,29 @@ class Executor(object):
         solution_stderr_reader.join()
         visualizer_stdout_reader.join()
         visualizer_stderr_reader.join()
-        self.solution_pid = None
 
         # close the resources
         self.socket_reader.close()
         self.socket_writer.close()
         conn.close()
+        self.clean()
 
         return (self.visualizer_stdout, self.solution_stderr)
+
+    def shutdown_handler(self, signum, _):
+        '''Called when user presses Ctrl+c or some equivalent process killer.
+        '''
+        install_shutdown_handlers(signal.SIG_IGN)
+        print_('Received %s, shutting down gracefully.' % get_signal_name(signum))
+        self._kill_solution()
+        self.kill_solution_stop()
+        try:
+            if self.visualizer_proc:
+                self.visualizer_proc.kill()
+                self.visualizer_proc = None
+        except:
+            pass
+        sys.exit(signum)
 
     def get_visualizer_params(self, seed, is_single_test, special_params):
         exec_params = [
@@ -114,23 +135,31 @@ class Executor(object):
             self.project.vis if is_single_test else self.project.novis]
         special_params = special_params.split()
         seed_params = ['-seed', '%s' % seed]
-
         return exec_params + self.project.params + special_params + seed_params
 
     def kill_solution_start(self):
+        '''Start a new thread listening for kill-solution event (press "Q")
+        from user.
+        '''
         self.kill_event = threading.Event()
-        self.kill_solution= threading.Thread(target=get_key_press,
-                                             args=['q', self.kill_event, self._kill_solution_cb])
+        self.kill_solution = threading.Thread(target=get_key_press,
+                                              args=['q', self.kill_event, self._kill_solution])
         self.kill_solution.start()
 
     def kill_solution_stop(self):
-        self.kill_event.set()
-        self.kill_solution.join()
+        '''Stop the kill-solution thread.
+        '''
+        if self.kill_solution:
+            self.kill_event.set()
+            self.kill_solution.join()
+            self.kill_event = None
+            self.kill_solution = None
 
-    def _kill_solution_cb(self):
+    def _kill_solution(self):
         try:
             if self.solution_pid:
                 os.kill(self.solution_pid, signal.SIGTERM)
+                self.solution_pid = None
         except:
             pass
         self.solution_killed = True

@@ -19,7 +19,7 @@ import sys
 
 from marathoner import MARATHONER_PORT
 from marathoner.utils.async_reader import AsyncReader
-from marathoner.utils.signal import get_signal_name
+from marathoner.utils.ossignal import get_signal_name
 
 
 class Mediator(object):
