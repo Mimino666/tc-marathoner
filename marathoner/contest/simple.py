@@ -25,7 +25,11 @@ class Contest(BaseContest):
         return Score(seed, score, run_time)
 
     def single_test_starting(self, seed):
-        print_('Running single test %s...' % seed)
+        tag = self.project.current_tag
+        if tag:
+            print_('Running single test %s with tag "%s"...' % (seed, tag.name))
+        else:
+            print_('Running single test %s...' % seed)
 
     def single_test_ending(self, seed, visualizer_stdout, solution_stderr, best_score, current_score):
         for line in visualizer_stdout:
@@ -38,7 +42,11 @@ class Contest(BaseContest):
 
 
     def multiple_tests_starting(self, num_tests):
-        print_('Running %s tests...' % num_tests)
+        tag = self.project.current_tag
+        if tag:
+            print_('Running %s tests with tag "%s"...' % (num_tests, tag.name))
+        else:
+            print_('Running %s tests...' % num_tests)
         log_filename = self.project.data_path('multiple_tests.log')
         self.log_file = open(log_filename, 'w')
         self.score_sum = 0

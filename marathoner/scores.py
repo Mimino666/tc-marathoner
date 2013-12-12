@@ -48,6 +48,10 @@ class Scores(object):
                     seed = int(seed)
                     score = float(score)
                     self.best_scores[seed] = Score(seed, score)
+        else:
+            # create empty file
+            with open(scores_file, 'w') as f:
+                pass
 
     def __getitem__(self, seed):
         return self.best_scores.get(seed, Score(seed, 0.0))

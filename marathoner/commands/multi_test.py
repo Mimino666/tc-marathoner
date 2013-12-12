@@ -19,6 +19,7 @@ class Command(BaseCommand):
         seed1 = int(match.group(1))
         seed2 = int(match.group(2))
         vis_params = match.group(3) or ''
+        tag = self.project.current_tag
 
         if seed2 < seed1:
             print_('Error: seed1 can\'t be larger than seed2!')
@@ -35,9 +36,13 @@ class Command(BaseCommand):
                 break
             current_score = self.contest.extract_score(seed, visualizer_stdout, solution_stderr)
             self.project.scores[seed] = current_score
+            if tag:
+                tag.scores[seed] = current_score
             self.contest.one_test_ending(seed, visualizer_stdout, solution_stderr,
                                          self.project.scores[seed], current_score)
             tests_run += 1
         self.executor.kill_solution_stop()
         self.project.scores.save()
+        if tag:
+            tag.scores.save()
         self.contest.multiple_tests_ending(tests_run)

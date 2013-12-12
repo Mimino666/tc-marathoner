@@ -1,3 +1,4 @@
+import hashlib
 import os
 from os import path
 import shlex
@@ -8,6 +9,7 @@ from six.moves import configparser
 
 from marathoner.contest.simple import Contest
 from marathoner.scores import Scores
+from marathoner.tag import Tag
 from marathoner.utils.ossignal import get_signal_name
 from marathoner.utils.proc import start_process
 
@@ -22,7 +24,7 @@ class Project(object):
     FIELDS = {
         'visualizer': True,
         'solution': True,
-        'source': False,
+        'source': True,
         'testcase': False,
         'maximize': True,
         'novis': False,
@@ -61,10 +63,34 @@ class Project(object):
                                       (field_name, value))
             setattr(self, field_name, value)
 
+        self.source_ext = path.splitext(self.source)[-1]
         self.mediator = __import__('marathoner.mediator', fromlist=['mediator']).__file__
         self.mediator = path.splitext(self.mediator)[0] + '.py'
         self.scores = Scores(self, self.data_path('scores.txt'))
         self.contest = Contest(self)
+
+        self._source_mtime = None
+        self._source_hash = None
+
+        # init tags
+        self.tags = {}  # map tag name to tag instance
+        self.hash_to_tag = {}  # map source hash to tag instance
+        for filename in os.listdir(self.tags_dir):
+            base, ext = path.splitext(filename)
+            if ext == '.score':
+                name = path.basename(base)
+                Tag(self, name)
+
+    def add_tag(self, tag):
+        if tag.source_hash in self.hash_to_tag:
+            raise ConfigError('Sources of tags "%s" and "%s" are the same.' %
+                              (tag.name, self.hash_to_tag[tag.source_hash].name))
+        self.tags[tag.name] = tag
+        self.hash_to_tag[tag.source_hash] = tag
+
+    def remove_tag(self, tag):
+        del self.tags[tag.name]
+        del self.hash_to_tag[tag.source_hash]
 
     def data_path(self, path_, create_dirs=False):
         '''If path is relative, return the given path inside the project dir,
@@ -75,6 +101,35 @@ class Project(object):
         if create_dirs and not path.exists(path_):
             os.makedirs(path_)
         return path_
+
+    def hash_of_file(self, filename):
+        # calculate the hash of the file
+        md5 = hashlib.md5()
+        with open(filename, 'rb') as f:
+            md5.update(f.read())
+        return md5.hexdigest()
+
+    @property
+    def tags_dir(self):
+        return self.data_path('tags', create_dirs=True)
+
+    @property
+    def source_hash(self):
+        '''Return the hash of the current version of source code.
+        Cache the hash value, between the changes of the file.
+        '''
+        mtime = path.getmtime(self.source)
+        if mtime != self._source_mtime:
+            self._source_mtime = mtime
+            self._source_hash = self.hash_of_file(self.source)
+        return self._source_hash
+
+    @property
+    def current_tag(self):
+        '''Return the current instance of Tag, based on the current hash
+        of the source code.
+        '''
+        return self.hash_to_tag.get(self.source_hash)
 
     def clean_solution(self, value):
         parsed_value = shlex.split(value)
