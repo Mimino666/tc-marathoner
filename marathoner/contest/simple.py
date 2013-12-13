@@ -34,7 +34,7 @@ class Contest(BaseContest):
         print_('\tRun time: %f' % current_score.run_time)
         print_('\tNew score: %f' % current_score.score)
         print_('\tBest score: %f' % best_score.score)
-        print_('\tRelative score: %f' % self._get_relative_score(best_score, current_score))
+        print_('\tRelative score: %f' % Score.relative_score(self.maximize, current_score, best_score))
 
 
     def multiple_tests_starting(self, num_tests):
@@ -47,7 +47,7 @@ class Contest(BaseContest):
         pass
 
     def one_test_ending(self, seed, visualizer_stdout, solution_stderr, best_score, current_score):
-        relative = self._get_relative_score(best_score, current_score)
+        relative = Score.relative_score(self.maximize, current_score, best_score)
         self.score_sum += relative
 
         seed_str = 'Seed %s:' % seed
@@ -64,11 +64,3 @@ class Contest(BaseContest):
     def multiple_tests_ending(self, num_tests):
         self.log_file.close()
         print_('Your relative score on %s tests is %.5f' % (num_tests, self.score_sum))
-
-    def _get_relative_score(self, best_score, current_score):
-        if not current_score.score:
-            return 0.0
-        if self.maximize:
-            return current_score.score / max(best_score.score, best_score.score)
-        else:
-            return min(best_score.score, current_score.score) / current_score.score

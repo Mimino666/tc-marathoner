@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
         # print all the seeds
         if match.group(1) is None:
-            for seed in self.project.scores.sorted_seeds:
+            for seed in sorted(self.project.scores.seeds):
                 _print(seed)
         # print one specific seed
         elif match.group(2) is None:

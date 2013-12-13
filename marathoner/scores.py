@@ -25,6 +25,15 @@ class Score(object):
         else:
             return score2
 
+    @classmethod
+    def relative_score(cls, maximize, current_score, best_score):
+        if not current_score.score:
+            return 0.0
+        if maximize:
+            return current_score.score / max(best_score.score, best_score.score)
+        else:
+            return min(best_score.score, current_score.score) / current_score.score
+
 
 class Scores(object):
     def __init__(self, project, scores_file):
@@ -48,11 +57,11 @@ class Scores(object):
         self.best_scores[seed] = score
 
     @property
-    def sorted_seeds(self):
-        return sorted(self.best_scores.keys())
+    def seeds(self):
+        return self.best_scores.keys()
 
     def save(self):
         with open(self.scores_file, 'w') as f:
-            for seed in self.sorted_seeds:
+            for seed in sorted(self.seeds):
                 score = self.best_scores[seed]
                 f.write('%d: %f\n' % (score.seed, score.score))
