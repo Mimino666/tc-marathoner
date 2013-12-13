@@ -39,6 +39,11 @@ def run_marathoner(args):
 
     print_('Welcome to Marathoner! Type "help" for any help.')
     print_('You are now working on project', project.project_name)
+
+    try:  # readline module is only available on unix systems
+        import readline
+    except ImportError:
+        pass
     while True:
         user_input = input('>>> ').strip()
         if not user_input:
