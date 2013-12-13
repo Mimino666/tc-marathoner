@@ -119,7 +119,7 @@ of tests you can *tag* the solution, before you do so:
 Marathoner will compute the hash of your current source code (you specified path to your source file in .cfg file)
 and store it under the name "*my_solution*". Now whenever you run some tests,
 Marathoner will check the hash of your current source code against the hashes
-of the source codes that you have tagged. If there is a match, Marathoner will
+of the source codes that you have already tagged. If there is a match, Marathoner will
 store the results of the tests under the matched tag name.
 ```
 >>> tag                                 # display the list of existing tags
@@ -130,8 +130,9 @@ store the results of the tests under the matched tag name.
 |-----------------|----------------------------|
 (*) means current active tag
 >>> 1 100                               # run seeds 1-100 and store the scores under "my_solution" tag
-Running 10 tests with tag "my_solution"...
->>> 100 200                             # run seeds 100-200 and add them to "my_solution" tag
+Running 100 tests with tag "my_solution"...
+>>> 101 200                             # run seeds 101-200 and add them to "my_solution" tag
+Running 100 tests with tag "my_solution"...
 >>> tag cmp my_solution                 # view the scores of seeds 1-200 of "my_solution" tag
 ```
 And now comes the killer! When you have tagged many different solutions
@@ -140,8 +141,7 @@ and you want to compare them against each other, simply run the command:
 >>> tag cmp my_solution other_solution  # compare the scores of tags "my_solution" and "other_solution"
 ```
 
-Note: Be careful when you change the source code and don't compile it - Marathoner will sill run the old code,
-but the hash of the source file will be different.
+Note: Be careful when you change the source code of your solution and don't compile it, Marathoner will sill run the old code, but the hash of the source file will be different.
 
 
 #### tag
