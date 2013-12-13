@@ -58,15 +58,15 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [Colo
    ```
 
 4. While still in *ColorLinkerMarat* directory, from command line run: ```marathoner run```.
-   If everything is okay, you should see a welcome message and the command line prompt. Try typing:
+   If everything is okay, you should see a welcome message and the command line prompt. Try to run:
    ```
    >>> 1
    Running single test 1...
    Score = 123456.0
-           Run time: 0.146289
-           New score: 1234567.000000
-           Best score: 123456.000000
-           Relative score: 0.0999994
+           Run time: 0.14
+           New score: 1234567.00
+           Best score: 123456.00
+           Relative score: 0.09999
    ```
    You should see the visualization for the seed number 1. Close the visualizer and type another command.
 
@@ -108,11 +108,103 @@ Show list of available commands.
 Quit Marathoner prompt.
 
 
+Tagging of solutions
+--------------------
+
+Once you have implemented a solution that you plan to run on a large number
+of tests you can *tag* the solution, before you do so:
+```
+>>> tag create my_solution             # tag the current solution with name "my_solution"
+```
+Marathoner will compute the hash of your current source code (you specified path to your source file in .cfg file)
+and store it under the name "*my_solution*". Now whenever you run some tests,
+Marathoner will check the hash of your current source code against the hashes
+of the source codes that you have tagged. If there is a match, Marathoner will
+store the results of the tests under the matched tag name.
+```
+>>> tag                                 # display the list of existing tags
+|-----------------|----------------------------|
+|             Tag |                    Created |
+|-----------------|----------------------------|
+| (*) my_solution | 2013-12-13 04:26:54.636494 |
+|-----------------|----------------------------|
+(*) means current active tag
+>>> 1 100                               # run seeds 1-100 and store the scores under "my_solution" tag
+Running 10 tests with tag "my_solution"...
+>>> 100 200                             # run seeds 100-200 and add them to "my_solution" tag
+>>> tag cmp my_solution                 # view the scores of seeds 1-200 of "my_solution" tag
+```
+And now comes the killer! When you have tagged many different solutions
+and you want to compare them against each other, simply run the command:
+```
+>>> tag cmp my_solution other_solution  # compare the scores of tags "my_solution" and "other_solution"
+```
+
+Note: Be careful when you change the source code and don't compile it - Marathoner will sill run the old code,
+but the hash of the source file will be different.
+
+
+#### tag
+Print the list of existing tags. Examples:
+```
+>>> tag
+|---------------|----------------------------|
+|           Tag |                    Created |
+|---------------|----------------------------|
+| (*) solution1 | 2013-12-13 04:26:54.636494 |
+|     solution2 | 2013-12-13 01:14:32.049821 |
+|---------------|----------------------------|
+(*) means current active tag
+```
+
+#### tag create &lt;tag&gt;
+Tag the current solution with the given name. Examples:
+```
+>>> tag create solution1                # tag the solution with name "solution1"
+>>> 1 10                                # run the seeds 1-10 and store them under "solution1" tag
+Running 10 tests with tag "solution1"...
+
+( change source code of solution )
+>>> 1 10                                # now, because the source code has changed, the current solution doesn't have any tag
+Running 10 tests...
+
+( change source code back )             # Marathoner automatically detects the change and "solution1" tag is active again
+>>> 11 20                               # run the seeds 11-20 and store them under "solution1" tag
+Running 10 tests with tag "solution1"...
+```
+
+#### tag delete &lt;tag&gt;
+Delete the selected tag. Examples:
+```
+>>> tag delete solution1
+Tag "solution1" was deleted.
+```
+
+#### tag cmp &lt;tag1&gt; &lt;tag2&gt; ...
+Compare the scores of the selected tags. Only the seeds that all the tags have in common will be compared. Examples:
+```
+>>> tag create solution1              # create tag "solution1"
+>>> 1 10                              # run the seeds 1-10 and store them under "solution1" tag
+>>> tag cmp solution1                 # view the scores of solution1 on seeds 1-10
+
+( change source code of solution )
+>>> tag create solution2              # create tag "solution2"
+>>> 5 15                              # run the seeds 5-15 and store them under "solution2" tag
+>>> tag cmp solution1 solution2       # compare the score of solutions on seeds 5-10 (these are the seeds they have in common)
+
+( chagnge source code again )
+>>> tag create solution3              # create tag "solution3"
+>>> 9 10                              # run the seeds 9-10 and store them under "solution3" tag
+>>> tag cmp solution1 solution2 solution3  # compare the score of solutions on seeds 9-10
+```
+
+
 Tips and tricks
 ---------------
 
 - If your solution gets stuck, type "*Q*" to terminate its execution. If you are executing multiple tests, it terminates the whole execution.
 - If your solution crashes on some seed and you want to debug it, you can find input data of this seed in file specified by *testcase* field in the .cfg file.
 - If you internally measure running time of your solution, from your solution output to standard error line in format: "```Run time = <run_time>```" and Marathoner will parse it out for further processing.
-- You can find log of the last multiple-tests run in *ColorLinkerMarat* dictionary, called *multiple_tests.log*.
+- You can find log of the last multiple-tests run in *ColorLinkerMarat* directory, called *multiple_tests.log*.
 - When you run multiple tests, standard error output from your solution is not displayed. But lines starting with "!" are displayed, still.
+- Marathoner stores copies all the tagged source codes in *ColorLinkerMarat / tags* directory, so you can view them.
