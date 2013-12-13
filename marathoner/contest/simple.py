@@ -11,6 +11,12 @@ class Contest(BaseContest):
     score_re = re.compile(r'^Score\s*=\s*(\d+(?:\.\d+)?)\s*$')
     run_time_re = re.compile(r'^Run time\s*=\s*(\d+(?:\.\d+)?)\s*$')
 
+    # formating strings used for outputing multi-test data
+    header = ('Seed', 'Score', 'Best', 'Relative', 'Run time')
+    column_len = [5, 15, 15, 8, 8]
+    format = '| %s |' %  ' | '.join('%%%ss' % l for l in column_len)
+    hl = '|-%s-|' % '-|-'.join('-' * l for l in column_len)  # horizontal line
+
     def extract_score(self, seed, visualizer_stdout, solution_stderr):
         score, run_time = None, 0.0
         for line in chain(visualizer_stdout, solution_stderr):
@@ -35,10 +41,10 @@ class Contest(BaseContest):
         for line in visualizer_stdout:
             print_(line.rstrip())
 
-        print_('\tRun time: %f' % current_score.run_time)
-        print_('\tNew score: %f' % current_score.score)
-        print_('\tBest score: %f' % best_score.score)
-        print_('\tRelative score: %f' % Score.relative_score(self.maximize, current_score, best_score))
+        print_('\tRun time: %.2f' % current_score.run_time)
+        print_('\tNew score: %.2f' % current_score.score)
+        print_('\tBest score: %.2f' % best_score.score)
+        print_('\tRelative score: %.5f' % Score.relative_score(self.maximize, current_score, best_score))
 
 
     def multiple_tests_starting(self, num_tests):
@@ -51,6 +57,11 @@ class Contest(BaseContest):
         self.log_file = open(log_filename, 'w')
         self.score_sum = 0
 
+        self._write_line('(+) means the absolute best score')
+        self._write_line(self.hl)
+        self._write_line(self.format % self.header)
+        self._write_line(self.hl)
+
     def one_test_starting(self, seed):
         pass
 
@@ -58,17 +69,24 @@ class Contest(BaseContest):
         relative = Score.relative_score(self.maximize, current_score, best_score)
         self.score_sum += relative
 
-        seed_str = 'Seed %s:' % seed
-        score_str = 'Score: %.2f' % current_score.score
-        best_str = 'Best: %.2f' % best_score.score
-        relative_str = 'Rel.: %.3f' % relative
-        run_time_str = 'Run time: %.2f' % current_score.run_time
+        if current_score.score == best_score.score:
+            current_score_str = '(+) %.2f' % current_score.score
+        else:
+            current_score_str = '%.2f' % current_score.score
 
-        s = '%-10s %-17s %-16s %-13s %s' % (seed_str, score_str, best_str, relative_str, run_time_str)
-        self.log_file.write(s + '\n')
+        data = (seed,
+            current_score_str,
+            '%.2f' % best_score.score,
+            '%.3f' % relative,
+            '%.2f' % current_score.run_time)
+        self._write_line(self.format % data)
+
+    def _write_line(self, line):
+        self.log_file.write(line + '\n')
         self.log_file.flush()
-        print_(s)
+        print_(line)
 
     def multiple_tests_ending(self, num_tests):
+        self._write_line(self.hl)
         self.log_file.close()
         print_('Your relative score on %s tests is %.5f' % (num_tests, self.score_sum))
