@@ -57,7 +57,6 @@ class Contest(BaseContest):
         self.log_file = open(log_filename, 'w')
         self.score_sum = 0
 
-        self._write_line('(+) means the absolute best score')
         self._write_line(self.hl)
         self._write_line(self.format % self.header)
         self._write_line(self.hl)
@@ -68,14 +67,8 @@ class Contest(BaseContest):
     def one_test_ending(self, seed, visualizer_stdout, solution_stderr, best_score, current_score):
         relative = Score.relative_score(self.maximize, current_score, best_score)
         self.score_sum += relative
-
-        if current_score.score == best_score.score:
-            current_score_str = '(+) %.2f' % current_score.score
-        else:
-            current_score_str = '%.2f' % current_score.score
-
         data = (seed,
-            current_score_str,
+            '%.2f' % current_score.score,
             '%.2f' % best_score.score,
             '%.3f' % relative,
             '%.2f' % current_score.run_time)
