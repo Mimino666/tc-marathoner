@@ -1,8 +1,10 @@
 from six import print_
 
 
-def print_table(header, table, footer=None):
+def print_table(*tables):
     '''Print tabular data in format:
+
+    If `tables` is: [header, data, footer], then print:
         ----------|---------|-----|
         | header1 | header2 | ... |
         | headerx | headery | ... |
@@ -15,31 +17,20 @@ def print_table(header, table, footer=None):
         |---------|---------|-----|
 
     '''
-    num_rows, num_cols = len(table), len(table[0])
     # calculate length for each column
-    col_len = [0] * num_cols
+    col_len = [0] * len(tables[0][0])
     def chlen(values):
         for i, c in enumerate(values):
             col_len[i] = max(col_len[i], len(str(c)))
-    if header:
-        for v in header:
-            chlen(v)
-    for v in table:
-        chlen(v)
-    if footer:
-        for v in footer:
-            chlen(v)
+    for table in tables:
+        for row in table:
+            chlen(row)
 
     # create formatting string
     format = '| %s |' %  ' | '.join('%%%ss' % l for l in col_len)
     hl = '|-%s-|' % '-|-'.join('-' * l for l in col_len)  # horizontal line
 
-    if header:
-        print_(hl)
-        print_('\n'.join(format % tuple(row) for row in header))
     print_(hl)
-    print_('\n'.join(format % tuple(row) for row in table))
-    print_(hl)
-    if footer:
-        print_('\n'.join(format % tuple(row) for row in footer))
+    for table in tables:
+        print_('\n'.join(format % tuple(row) for row in table))
         print_(hl)

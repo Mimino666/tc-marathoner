@@ -63,13 +63,15 @@ class Command(BaseCommand):
                 else:
                     row.append('%.2f' % current_score.score)
             table.append([seed] + row + ['%.2f' % best_score.score])
+
+        names = [[''] + [tag.name for tag in tags] + ['Best']]
         footer = [
             ['Relative'] + ['%.5f' % x for x in relative_score] + [len(seeds)],
             ['# (*)'] + num_best + ['/'],
             ['# (+)'] + num_absolute_best + ['/'],
         ]
 
-        print_table(header, table, footer)
+        print_table(header, table, names, footer)
         print_()
         print_('(*) means the best score among the selected tags')
         print_('(+) means the absolute best score')
