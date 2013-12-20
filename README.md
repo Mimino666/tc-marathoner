@@ -46,9 +46,7 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [Colo
    ```
    [marathoner]
    visualizer = c:\Users\Mimino\ColorLinker\ColorLinkerVis.jar
-   solution = "c:\Users\Mimino\ColorLinker\ColorLinker.exe"  # notice the quotes here!
-   # for Java:
-   #   solution = java -cp "c:\Users\Mimino\ColorLinker\ColorLinker.class"
+   solution = "c:\Users\Mimino\ColorLinker\ColorLinker.exe"
    source = c:\Users\Mimino\ColorLinker\ColorLinker\ColorLinker.cpp
    testcase = c:\Users\Mimino\ColorLinker\testcase.txt
    maximize = false
