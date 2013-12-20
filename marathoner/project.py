@@ -79,7 +79,8 @@ class Project(object):
             base, ext = path.splitext(filename)
             if ext == '.score':
                 name = path.basename(base)
-                Tag(self, name)
+                tag = Tag(self, name)
+                self.scores.update(tag.scores)
 
     def add_tag(self, tag):
         if tag.source_hash in self.hash_to_tag:

@@ -69,3 +69,7 @@ class Scores(object):
             for seed in sorted(self.seeds):
                 score = self.best_scores[seed]
                 f.write('%d: %f\n' % (score.seed, score.score))
+
+    def update(self, scores):
+        for seed in scores.seeds:
+            self[seed] = Score.better(self.project.maximize, self[seed], scores[seed])
