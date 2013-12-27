@@ -17,7 +17,7 @@ class BaseContest(object):
         '''
         raise NotImplementedError()
 
-    # single test callbacks
+    # single-test callbacks
     def single_test_starting(self, seed):
         '''Called before running the single test.'''
         raise NotImplementedError()
@@ -37,7 +37,10 @@ class BaseContest(object):
 
     # multi-test callbacks
     def multiple_tests_starting(self, num_tests):
-        '''Called before running the batch of tests.'''
+        '''Called before running the batch of tests.
+
+        @param num_tests: number of tests to be run.
+        '''
         raise NotImplementedError()
 
     def one_test_starting(self, seed):
@@ -55,5 +58,7 @@ class BaseContest(object):
         @param num_tests: number of tests that actually ran. Can be lower
                           than number of tests sent to `multiple_tests_starting()`,
                           if user kills execution.
+                          Basically it is number of times `one_test_ending()`
+                          was called.
         '''
         raise NotImplementedError()

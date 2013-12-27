@@ -14,7 +14,7 @@ class Contest(BaseContest):
     header = ('Seed', 'Score', 'Best', 'Relative', 'Run time')
     column_len = [5, 15, 15, 8, 8]
     format = '| %s |' %  ' | '.join('%%%ss' % l for l in column_len)
-    hl = '|-%s-|' % '-|-'.join('-' * l for l in column_len)  # horizontal line
+    hline = '|-%s-|' % '-|-'.join('-' * l for l in column_len)  # horizontal line
 
     def extract_score(self, visualizer_stdout, solution_stderr):
         for line in chain(visualizer_stdout, solution_stderr):
@@ -48,15 +48,18 @@ class Contest(BaseContest):
         log_filename = self.project.data_path('multiple_tests.log')
         self.log_file = open(log_filename, 'w')
         self.score_sum = 0
+        self.zero_seeds = []
 
-        self._write_line(self.hl)
+        self._write_line(self.hline)
         self._write_line(self.format % self.header)
-        self._write_line(self.hl)
+        self._write_line(self.hline)
 
     def one_test_starting(self, seed):
         pass
 
     def one_test_ending(self, seed, visualizer_stdout, solution_stderr, best_score, current_score):
+        if not current_score.score:
+            self.zero_seeds.append(seed)
         relative = Score.relative_score(self.maximize, current_score, best_score)
         self.score_sum += relative
         data = (seed,
@@ -72,6 +75,9 @@ class Contest(BaseContest):
         print_(line)
 
     def multiple_tests_ending(self, num_tests):
-        self._write_line(self.hl)
+        self._write_line(self.hline)
         self.log_file.close()
         print_('Your relative score on %s tests is %.5f' % (num_tests, self.score_sum))
+        if self.zero_seeds:
+            print_('You have scored zero points on %s seeds. Here are some of the seeds: %s' %
+                   (len(self.zero_seeds), self.zero_seeds[:10]))

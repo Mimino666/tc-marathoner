@@ -13,6 +13,7 @@ class Tag(object):
         self.scores_filename = path.join(project.tags_dir, name+'.score')
         self.scores = Scores(project, self.scores_filename)
         self.source_filename = path.join(project.tags_dir, name+project.source_ext)
+        # copy the current source file
         if create_new:
             copyfile(self.project.source, self.source_filename)
 

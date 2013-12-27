@@ -3,14 +3,14 @@ import re
 
 
 class Score(object):
-    '''Encapsulates score and run-time from the single test.'''
+    '''Encapsulates score and run-time of the single test.'''
     def __init__(self, seed, score, run_time=None):
         self.seed = int(seed)
         self.score = float(score)
         self.run_time = float(run_time or 0.0)
 
     def __str__(self):
-        return '<Test-%s Score: %s Time: %s>' % (self.seed, self.score, self.time)
+        return '<Test-%s Score: %s Run time: %s>' % (self.seed, self.score, self.time)
 
     @classmethod
     def better(cls, maximize, score1, score2):
@@ -45,7 +45,7 @@ class Score(object):
 
 
 class Scores(object):
-    line_re = re.compile(r'^\D*(?P<seed>\d+(?:[,.]\d+)?)\D+(?P<score>\d+(?:[,.]\d+)?)(\D+(?P<time>\d+(?:[,.]\d+)?))?\D*$', re.IGNORECASE)
+    score_re = re.compile(r'^\D*(?P<seed>\d+(?:[,.]\d+)?)\D+(?P<score>\d+(?:[,.]\d+)?)(\D+(?P<time>\d+(?:[,.]\d+)?))?\D*$', re.IGNORECASE)
 
     def __init__(self, project, scores_file):
         self.project = project
@@ -55,7 +55,7 @@ class Scores(object):
         if path.exists(scores_file):
             with open(scores_file, 'r') as f:
                 for num, line in enumerate(f, 1):
-                    match = self.line_re.match(line)
+                    match = self.score_re.match(line)
                     if match:
                         score = Score(
                             match.group('seed'),

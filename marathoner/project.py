@@ -69,9 +69,6 @@ class Project(object):
         self.scores = Scores(self, self.data_path('scores.txt'))
         self.contest = Contest(self)
 
-        self._source_mtime = None
-        self._source_hash = None
-
         # init tags
         self.tags = {}  # map tag name to tag instance
         self.hash_to_tag = {}  # map source hash to tag instance
@@ -114,6 +111,8 @@ class Project(object):
     def tags_dir(self):
         return self.data_path('tags', create_dirs=True)
 
+    _source_mtime = None
+    _source_hash = None
     @property
     def source_hash(self):
         '''Return the hash of the current version of source code.
@@ -138,10 +137,7 @@ class Project(object):
         try:
             solution_proc = start_process(parsed_value)
         except:
-            raise ConfigError('Field "solution" in marathoner.cfg is not properly configured. '
-                              'Try to copy it and run it from the command line. '
-                              'Did it do something? '
-                              'It is supposed to start your solution program.')
+            raise ConfigError('Field "solution" in marathoner.cfg is not properly configured. Try to run from command line:\n    %s' % value)
 
         time.sleep(0.5)
         code = solution_proc.poll()
@@ -171,4 +167,4 @@ class Project(object):
         return value == 'true'
 
     def clean_params(self, value):
-        return value.split()
+        return shlex.split(value)

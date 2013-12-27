@@ -20,8 +20,8 @@ def new_marathoner(args):
     if len(args) != 1:
         raise UsageError('Exactly one argument is required.')
     project_name = args[0]
-    if not re.search(r'^[_a-zA-Z]\w*$', project_name):
-        print_('Error: Project names must begin with a letter and '
+    if not re.match(r'^[_a-zA-Z]\w*$', project_name):
+        print_('Error: Project name must begin with a letter and '
                'contain only letters, numbers and underscores.')
         sys.exit(1)
     elif os.path.exists(project_name):
@@ -58,7 +58,7 @@ def run_marathoner(args):
 
 available_commands = {
     'new': (new_marathoner, '<project_name>', 'Create a new marathoner project.'),
-    'run': (run_marathoner, '[path_to_project]', 'Run marathoner project.')
+    'run': (run_marathoner, '[path_to_project]', 'Run existing marathoner project.')
 }
 
 
@@ -66,16 +66,13 @@ def print_usage(cmd_name, help):
     _, cmd_syntax, cmd_help = available_commands[cmd_name]
     cmd = '%s %s' % (cmd_name, cmd_syntax)
     if help:
-        print_('  %-25s %s' % (cmd, cmd_help))
+        print_('  marathoner %-25s %s' % (cmd, cmd_help))
     else:
-        print_('  %s' % cmd)
+        print_('  marathoner %s' % cmd)
 
 
 def print_help():
     print_('Marathoner %s\n' % marathoner.__version__)
-
-    print_('Usage:')
-    print_('  marathoner <command> [args]\n')
     print_('Available commands:')
     for cmd_name in available_commands:
         print_usage(cmd_name, help=True)
