@@ -8,12 +8,12 @@ Features
 --------
 
 - Cross-platform: Windows, Linux, Mac OS X. Written in Python.
+- Works with visualizer .jar files, so it doesn't require any changes to your solution code.
 - VERY simple interface.
   To run your solution on seed 5 just type: ```5```.
   To run your solution on first 100 seeds, just type: ```1 100```.
-- Keeping track of the best scores for each seed, so you can compare your solutions locally.
-- Export of input data from visualizer into file, so you can debug on them.
-- Works with visualizer .jar files, so it doesn't require any changes to the solution code.
+- Keeps track of the best scores for each seed, so you can compare your solutions locally.
+- Exports input data from visualizer into file, so you can debug on them.
 
 
 Installation
@@ -21,9 +21,9 @@ Installation
 
 Get Python at [http://www.python.org](http://www.python.org) (versions 2.6, 2.7 and 3.x are supported).
 
-If you have *pip* Python package manager installed, run: ```pip install marathoner```.
+If you have *pip* Python package manager installed, run: ```pip install marathoner```. To upgrade for a newer version, run: ```pip install marathoner --upgrade```.
 
-Or download the source code and from *marathoner* directory run: ```python setup.py install```.
+Or download the source code from GitHub and from *tc-marathoner* directory run: ```python setup.py install```.
 
 
 Getting started
@@ -38,16 +38,16 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [Colo
 2. From command line run: ```marathoner new ColorLinkerMarat```.
 
    In your current directory Marathoner will create a new directory named *ColorLinkerMarat* where it will
-   store all files and folders related to ColorLinker match.
+   store all its work files related to ColorLinker match.
 
 3. Go into newly created directory *ColorLinkerMarat* and edit *marathoner.cfg* file.
-   Fill out its contents as described in comments inside the file. Here is an example of my .cfg file for this match:
+   Fill out its contents as described in comments inside the file. Here is an example of my *marathoner.cfg* file for this match:
 
    ```
    [marathoner]
    visualizer = c:\Users\Mimino\ColorLinker\ColorLinkerVis.jar
    solution = "c:\Users\Mimino\ColorLinker\ColorLinker.exe"
-   source = c:\Users\Mimino\ColorLinker\ColorLinker\ColorLinker.cpp
+   source = c:\Users\Mimino\ColorLinker\ColorLinker.cpp
    testcase = c:\Users\Mimino\ColorLinker\testcase.txt
    maximize = false
    novis = -novis
@@ -66,13 +66,13 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [Colo
            Best score: 123456.00
            Relative score: 0.09999
    ```
-   You should see the visualization for the seed number 1. Close the visualizer and type another command.
+   You should also see the visualization for the seed number 1. Close the visualizer and type another command.
 
-   Congratulations, you are now ready to compete!
+Congratulations, you are now ready to compete!
 
 
-Available commands
-------------------
+Basic commands
+--------------
 
 #### &lt;seed&gt; [vis params]
 Run single test with visualization. Examples:
@@ -93,7 +93,7 @@ Print the best scores for the seeds. Examples:
 ```
 >>> best                # print the best scores for all the known seeds
 >>> best 5              # print the best score for seed 5
->>> best 1 100          # print the best scores for seeds in interval 1-100, inclusive
+>>> best 1 100          # print the best scores for seeds from interval 1-100, inclusive
 ```
 
 #### clear
@@ -114,18 +114,18 @@ of tests you can *tag* the solution, before you do so:
 ```
 >>> tag create my_solution             # tag the current solution with name "my_solution"
 ```
-Marathoner will compute the hash of your current source code (you specified path to your source file in .cfg file)
+Marathoner will compute the hash of your current source code (you specified path to your source code in .cfg file)
 and store it under the name "*my_solution*". Now whenever you run some tests,
 Marathoner will check the hash of your current source code against the hashes
 of the source codes that you have already tagged. If there is a match, Marathoner will
 store the results of the tests under the matched tag name.
 ```
 >>> tag                                 # display the list of existing tags
-|-----------------|----------------------------|
-|             Tag |                    Created |
-|-----------------|----------------------------|
-| (*) my_solution | 2013-12-13 04:26:54.636494 |
-|-----------------|----------------------------|
+|-----------------|---------------------|
+|             Tag |             Created |
+|-----------------|---------------------|
+| (*) my_solution | 2013-12-13 04:26:54 |
+|-----------------|---------------------|
 (*) means current active tag
 >>> 1 100                               # run seeds 1-100 and store the scores under "my_solution" tag
 Running 100 tests with tag "my_solution"...
@@ -139,26 +139,27 @@ and you want to compare them against each other, simply run the command:
 >>> tag cmp my_solution other_solution  # compare the scores of tags "my_solution" and "other_solution"
 ```
 
-Note: Be careful when you change the source code of your solution and don't compile it, Marathoner will sill run the old code, but the hash of the source file will be different.
+Note: Be careful when you change the source code of your solution and don't compile it.
+Marathoner will still run the old code, but the hash of the source file will be different.
 
 
 #### tag
 Print the list of existing tags. Examples:
 ```
 >>> tag
-|---------------|----------------------------|
-|           Tag |                    Created |
-|---------------|----------------------------|
-| (*) solution1 | 2013-12-13 04:26:54.636494 |
-|     solution2 | 2013-12-13 01:14:32.049821 |
-|---------------|----------------------------|
+|---------------|---------------------|
+|           Tag |             Created |
+|---------------|---------------------|
+| (*) solution1 | 2013-12-13 04:26:54 |
+|     solution2 | 2013-12-13 01:14:32 |
+|---------------|---------------------|
 (*) means current active tag
 ```
 
 #### tag create &lt;tag&gt;
 Tag the current solution with the given name. Examples:
 ```
->>> tag create solution1                # tag the solution with name "solution1"
+>>> tag create solution1                # tag the current solution with name "solution1"
 >>> 1 10                                # run the seeds 1-10 and store them under "solution1" tag
 Running 10 tests with tag "solution1"...
 
@@ -175,6 +176,7 @@ Running 10 tests with tag "solution1"...
 Delete the selected tag. Examples:
 ```
 >>> tag delete solution1
+Are you sure you want to delete tag "solution1"? [y/n]  y
 Tag "solution1" was deleted.
 ```
 
@@ -200,9 +202,9 @@ Compare the scores of the selected tags. Only the seeds that all the tags have i
 Tips and tricks
 ---------------
 
-- If your solution gets stuck, type "*Q*" to terminate its execution. If you are executing multiple tests, it terminates the whole execution.
-- If your solution crashes on some seed and you want to debug it, you can find input data of this seed in file specified by *testcase* field in the .cfg file.
+- If your solution gets stuck, type "*Q*" to terminate its execution. If you are executing multiple tests, it terminates the whole execution (best scores of already run tests are still saved, though).
+- If your solution crashes on some seed and you want to debug it, you can find input data of this seed in file specified by *testcase* field in *marathoner.cfg*.
 - If you internally measure running time of your solution, from your solution output to standard error line in format: "```Run time = <run_time>```" and Marathoner will parse it out for further processing.
 - You can find log of the last multiple-tests run in *ColorLinkerMarat* directory, called *multiple_tests.log*.
-- When you run multiple tests, standard error output from your solution is not displayed. But lines starting with "!" are displayed, still.
-- Marathoner stores copies all the tagged source codes in *ColorLinkerMarat / tags* directory, so you can view them.
+- When you run multiple tests, standard error output from your solution is not displayed. But lines starting with ```!``` are displayed, still.
+- Marathoner stores copies of all tagged source codes in ```ColorLinkerMarat/tags``` directory, so you can view them.
