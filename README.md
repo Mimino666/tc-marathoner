@@ -202,9 +202,9 @@ Compare the scores of the selected tags. Only the seeds that all the tags have i
 Tips and tricks
 ---------------
 
-- If your solution gets stuck, type "*Q*" to terminate its execution. If you are executing multiple tests, it terminates the whole execution (best scores of already run tests are still saved, though).
+- If your solution gets stuck, press ```q``` to easily terminate it. If you are running multiple tests, it terminates the whole execution (best scores of already run tests are still saved, though).
 - If your solution crashes on some seed and you want to debug it, you can find input data of this seed in file specified by *testcase* field in *marathoner.cfg*.
-- If you internally measure running time of your solution, from your solution output to standard error line in format: "```Run time = <run_time>```" and Marathoner will parse it out for further processing.
 - You can find log of the last multiple-tests run in *ColorLinkerMarat* directory, called *multiple_tests.log*.
 - When you run multiple tests, standard error output from your solution is not displayed. But lines starting with ```!``` are displayed, still.
-- Marathoner stores copies of all tagged source codes in ```ColorLinkerMarat/tags``` directory, so you can view them.
+- Marathoner stores copies of all tagged source codes in ```ColorLinkerMarat/tags``` directory, so you can later return to them.
+- If you internally measure running time of your solution, output to standard error a line in format: ```Run time = <run_time>```. Marathoner will use this time instead of the one it measures externally, which is not entirely precise.

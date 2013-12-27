@@ -3,17 +3,17 @@ be pressed. This thing is hard to do in Python without external libraries,
 so forgive me for any non-working hacks below.
 '''
 
-def _windows_key_press(wanted_key, kill_event, received_cb):
+def _windows_key_press(wanted_key, stop_event, received_cb):
     '''Check for key presses from stdin in non-blocking way. Check until either
-    `wanted_key` was pressed or `kill_event` has been set.
-    If we detect `wanted_key` before `kill_event` is set, call `received_cb`
+    `wanted_key` was pressed or `stop_event` has been set.
+    If we detect `wanted_key` before `stop_event` is set, call `received_cb`
     callback and return.
 
     @param wanted_key: key to be pressed (in our case "q")
     @type wanted_key: one-letter str
 
-    @param kill_event: indicate to stop reading and return
-    @type kill_event: threading.Event
+    @param stop_event: indicate to stop reading and return
+    @type stop_event: threading.Event
 
     @param received_cb: called when `wanted_key` was read
     @type received_cb: empty-argument callable
@@ -22,7 +22,7 @@ def _windows_key_press(wanted_key, kill_event, received_cb):
     import time
 
     wanted_key = wanted_key.lower()
-    while not kill_event.is_set():
+    while not stop_event.is_set():
         if msvcrt.kbhit():
             c = msvcrt.getch()
             if c.lower() == wanted_key:
@@ -32,7 +32,7 @@ def _windows_key_press(wanted_key, kill_event, received_cb):
             time.sleep(0.5)
 
 
-def _linux_key_press(wanted_key, kill_event, received_cb):
+def _linux_key_press(wanted_key, stop_event, received_cb):
     import select
     import sys
     import termios
@@ -46,7 +46,7 @@ def _linux_key_press(wanted_key, kill_event, received_cb):
     old_settings = termios.tcgetattr(sys.stdin)
     try:
         tty.setcbreak(sys.stdin.fileno())
-        while not kill_event.is_set():
+        while not stop_event.is_set():
             if is_data():
                 c = sys.stdin.read(1).lower()
                 if c == wanted_key:
@@ -72,17 +72,17 @@ def test_keypress():
     from six import print_
     from six.moves import input
 
-    kill_event = threading.Event()
+    stop_event = threading.Event()
 
     was_received = [False]
     def received():
         was_received[0] = True
 
     print_('You have 5 seconds to press "q". Go for it...')
-    thread = threading.Thread(target=get_key_press, args=['q', kill_event, received])
+    thread = threading.Thread(target=get_key_press, args=['q', stop_event, received])
     thread.start()
     thread.join(5.0)
-    kill_event.set()
+    stop_event.set()
 
     if was_received[0]:
         print_('You have managed to press "q". Congratulations!')

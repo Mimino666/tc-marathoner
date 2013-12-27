@@ -6,12 +6,8 @@ class BaseContest(object):
         self.project = project
         self.maximize = project.maximize
 
-    def extract_score(self, seed, visualizer_stdout, solution_stderr):
-        '''Extract score and run time information.
-        Return initialized Score object.
-
-        @param seed: seed number of the test
-        @type seed: int
+    def extract_score(self, visualizer_stdout, solution_stderr):
+        '''Extract raw score and return it.
 
         @param visualizer_stdout: output received from visualizer's stdout
         @type visualizer_stdout: list of lines

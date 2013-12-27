@@ -15,7 +15,8 @@ class AsyncReader(threading.Thread):
             try:
                 line = self.stream.readline()
             except:
-                break
+                return
             if not line:
-                break
-            self.cb(line)
+                return
+            if self.cb(line):
+                return

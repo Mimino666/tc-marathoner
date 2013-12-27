@@ -1,23 +1,22 @@
 '''
-Mediator is the python program that is actually executed by visualizer,
+Mediator is a python script that gets executed by visualizer,
 instead of the user's solution. Mediator executes user's solution as a child
 process and redirects all the communication between the visualizer and the
-solution.
+solution. On background, it communacates with Marathoner through sockets.
 
-On background, it communacates with Marathoner through sockets.
-This injection hack allows to:
+This injection allows to:
   - export input data from visualizer into testcase file
   - send stderr from solution to Marathoner so it can be outputed in real-time
-  - listen for kill-signal from Marathoner to kill the solution
-    (when it gets stuck, for example)
+  - better handling of crash of user's solution
+  - killing of stuck user's solution (by pressing "q")
 '''
 import pickle
 import socket
 import sys
+import time
 
-from marathoner import MARATHONER_PORT
+from marathoner import MARATHONER_PORT, MARATHONER_END_OF_OUTPUT
 from marathoner.utils.async_reader import AsyncReader
-from marathoner.utils.ossignal import get_signal_name
 from marathoner.utils.proc import start_process
 
 
@@ -52,17 +51,19 @@ class Mediator(object):
         visualizer_input_reader.start()
         solution_output_reader.start()
         solution_error_reader.start()
-
+        start_time = time.time()
         self.solution_proc.wait()
+        end_time = time.time()
         solution_output_reader.join()
         solution_error_reader.join()
 
-        # return code from solution
-        code = self.solution_proc.poll()
-        if code:
-            msg = '!WARNING: Your solution ended with non-zero code: %s\n' % get_signal_name(code)
-            self.socket_writer.write(msg.encode('utf-8'))
-            self.socket_writer.flush()
+        # signalize end of stderr output
+        self.socket_writer.write(MARATHONER_END_OF_OUTPUT.encode('utf-8'))
+        # raw run time
+        pickle.dump(end_time-start_time, self.socket_writer)
+        # exit code of solution
+        pickle.dump(self.solution_proc.poll(), self.socket_writer)
+        self.socket_writer.flush()
 
         # close the resources
         if self.testcase_file:

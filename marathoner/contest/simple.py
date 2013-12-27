@@ -9,7 +9,6 @@ from marathoner.scores import Score
 
 class Contest(BaseContest):
     score_re = re.compile(r'^\s*Score\s*=\s*(\d+(?:[.,]\d+)?)\s*$')
-    run_time_re = re.compile(r'^\s*Run\s+time\s*=\s*(\d+(?:[.,]\d+)?)\s*$')
 
     # formating strings used for outputing multi-test data
     header = ('Seed', 'Score', 'Best', 'Relative', 'Run time')
@@ -17,18 +16,11 @@ class Contest(BaseContest):
     format = '| %s |' %  ' | '.join('%%%ss' % l for l in column_len)
     hl = '|-%s-|' % '-|-'.join('-' * l for l in column_len)  # horizontal line
 
-    def extract_score(self, seed, visualizer_stdout, solution_stderr):
-        score, run_time = None, 0.0
+    def extract_score(self, visualizer_stdout, solution_stderr):
         for line in chain(visualizer_stdout, solution_stderr):
             score_match = self.score_re.match(line)
             if score_match:
-                score = float(score_match.group(1))
-            run_time_match = self.run_time_re.match(line)
-            if run_time_match:
-                run_time = float(run_time_match.group(1))
-        if score is None:
-            raise RuntimeError('Unable to extract score from seed %s' % seed)
-        return Score(seed, score, run_time)
+                return float(score_match.group(1))
 
     def single_test_starting(self, seed):
         tag = self.project.current_tag
