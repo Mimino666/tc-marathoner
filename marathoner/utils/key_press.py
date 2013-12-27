@@ -19,7 +19,12 @@ def _windows_key_press(wanted_key, stop_event, received_cb):
     @type received_cb: empty-argument callable
     '''
     import msvcrt
+    import sys
     import time
+
+    # skip if input is received from file or pipe redirection
+    if not sys.stdin.isatty():
+        return
 
     wanted_key = wanted_key.lower()
     while not stop_event.is_set():
@@ -38,6 +43,10 @@ def _linux_key_press(wanted_key, stop_event, received_cb):
     import termios
     import time
     import tty
+
+    # skip if input is received from file or pipe redirection
+    if not sys.stdin.isatty():
+        return
 
     def is_data():
         return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])

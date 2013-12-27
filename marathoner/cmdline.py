@@ -45,7 +45,10 @@ def run_marathoner(args):
     except ImportError:
         pass
     while True:
-        user_input = input('>>> ').strip()
+        try:
+            user_input = input('>>> ').strip()
+        except EOFError:
+            return
         if not user_input:
             continue
         for cmd in commands:
