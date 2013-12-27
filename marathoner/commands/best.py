@@ -4,6 +4,7 @@ from six import print_
 from six.moves import xrange
 
 from marathoner.commands.base import BaseCommand
+from marathoner.utils.print_table import print_table
 
 
 class Command(BaseCommand):
@@ -15,21 +16,22 @@ class Command(BaseCommand):
         return self.cmd_re.match(command)
 
     def handle(self, command):
-        def _print(seed):
-            seed_str = 'Seed %s:' % seed
-            score_str = '%.2f' % self.project.scores[seed].score
-            print_('%-10s %s' % (seed_str, score_str))
+        header = [['Seed', 'Score', 'Run time']]
+        table = []
+        def add_seed(seed):
+            score = self.project.scores[seed]
+            table.append([seed, score.score, score.run_time])
 
         match = self.cmd_re.match(command)
 
         # print all the seeds
         if match.group(1) is None:
             for seed in sorted(self.project.scores.seeds):
-                _print(seed)
+                add_seed(seed)
         # print one specific seed
         elif match.group(2) is None:
             seed = int(match.group(1))
-            _print(seed)
+            add_seed(seed)
         # print interval of seeds
         else:
             seed1 = int(match.group(1))
@@ -38,4 +40,5 @@ class Command(BaseCommand):
                 print_('Error: seed1 can\'t be larger than seed2!')
                 return
             for seed in xrange(seed1, seed2+1):
-                _print(seed)
+                add_seed(seed)
+        print_table(header, table, header)

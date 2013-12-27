@@ -18,7 +18,8 @@ class Command(BaseCommand):
     def handle(self, command):
         header = [['Tag', 'Created']]
         current_tag = self.project.current_tag
-        table = [(('(*) ' if current_tag is tag else '') + tag.name, tag.time_created)
+        table = [(('(*) ' if current_tag is tag else '') + tag.name,
+                  tag.time_created.strftime('%Y-%m-%d %X'))
                  for tag in itervalues(self.project.tags)]
         if table:
             table.sort(key=itemgetter(1), reverse=True)
