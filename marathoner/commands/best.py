@@ -20,7 +20,7 @@ class Command(BaseCommand):
         table = []
         def add_seed(seed):
             score = self.project.scores[seed]
-            table.append([seed, score.score, score.run_time])
+            table.append([seed, '%.2f' % score.score, '%.2f' % score.run_time])
 
         match = self.cmd_re.match(command)
 
