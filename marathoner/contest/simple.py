@@ -8,8 +8,8 @@ from marathoner.scores import Score
 
 
 class Contest(BaseContest):
-    score_re = re.compile(r'^Score\s*=\s*(\d+(?:\.\d+)?)\s*$')
-    run_time_re = re.compile(r'^Run time\s*=\s*(\d+(?:\.\d+)?)\s*$')
+    score_re = re.compile(r'^\s*Score\s*=\s*(\d+(?:[.,]\d+)?)\s*$')
+    run_time_re = re.compile(r'^\s*Run\s+time\s*=\s*(\d+(?:[.,]\d+)?)\s*$')
 
     # formating strings used for outputing multi-test data
     header = ('Seed', 'Score', 'Best', 'Relative', 'Run time')

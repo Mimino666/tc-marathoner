@@ -45,7 +45,7 @@ class Score(object):
 
 
 class Scores(object):
-    line_re = re.compile(r'^\D*(?P<seed>\d[\d.,]*)\D+(?P<score>\d[\d.,]*)(\D+(?P<time>\d[\d.,]*))?\D*$', re.IGNORECASE)
+    line_re = re.compile(r'^\D*(?P<seed>\d+(?:[,.]\d+)?)\D+(?P<score>\d+(?:[,.]\d+)?)(\D+(?P<time>\d+(?:[,.]\d+)?))?\D*$', re.IGNORECASE)
 
     def __init__(self, project, scores_file):
         self.project = project
