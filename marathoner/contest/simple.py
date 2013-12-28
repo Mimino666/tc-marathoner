@@ -47,7 +47,7 @@ class Contest(BaseContest):
             print_('Running %s tests...' % num_tests)
         log_filename = self.project.data_path('multiple_tests.log')
         self.log_file = open(log_filename, 'w')
-        self.score_sum = 0
+        self.score_sum = 0.0
         self.zero_seeds = []
 
         self._write_line(self.hline)
@@ -76,8 +76,13 @@ class Contest(BaseContest):
 
     def multiple_tests_ending(self, num_tests):
         self._write_line(self.hline)
-        self.log_file.close()
-        print_('Your relative score on %s tests is %.5f' % (num_tests, self.score_sum))
+        self._write_line(self.format % self.header)
+        self._write_line(self.hline)
+        self._write_line('')
+        self._write_line('Relative score on %s tests: %.5f' % (num_tests, self.score_sum))
+        if num_tests:
+            self._write_line('Average relative score: %.5f' % (self.score_sum / num_tests))
         if self.zero_seeds:
-            print_('You have scored zero points on %s seeds. Here are some of the seeds: %s' %
+            self._write_line('You have scored zero points on %s seeds. Here are some of the seeds: %s' %
                    (len(self.zero_seeds), self.zero_seeds[:10]))
+        self.log_file.close()

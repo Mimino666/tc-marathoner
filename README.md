@@ -131,12 +131,12 @@ store the results of the tests under the matched tag name.
 Running 100 tests with tag "my_solution"...
 >>> 101 200                             # run seeds 101-200 and add them to "my_solution" tag
 Running 100 tests with tag "my_solution"...
->>> tag cmp my_solution                 # view the scores of seeds 1-200 of "my_solution" tag
+>>> tag my_solution                     # view the scores of seeds 1-200 of "my_solution" tag
 ```
 And now comes the killer! When you have tagged many different solutions
 and you want to compare them against each other, simply run the command:
 ```
->>> tag cmp my_solution other_solution  # compare the scores of tags "my_solution" and "other_solution"
+>>> tag my_solution other_solution      # compare the scores of tags "my_solution" and "other_solution"
 ```
 
 Note: Be careful when you change the source code of your solution and don't compile it.
@@ -154,6 +154,39 @@ Print the list of existing tags. Examples:
 |     solution2 | 2013-12-13 01:14:32 |
 |---------------|---------------------|
 (*) means current active tag
+```
+
+#### tag &lt;tag&gt;
+Print the scores of the selected tag. Exmaples:
+```
+>>> tag my_solution
+|------|----------|----------|----------|----------|
+| Seed |    Score |     Best | Relative | Run time |
+|------|----------|----------|----------|----------|
+|    1 |   257.00 |   257.00 |    1.000 |     1.31 |
+|    2 |   353.00 |   352.00 |    0.997 |     1.00 |
+|    3 |     0.00 |   294.00 |    0.000 |     1.04 |
+|------|----------|----------|----------|----------|
+Relative score of "my_solution" tag on 3 tests: 1.997
+Average relative score: 0.66567
+You have scored zero points on 1 seeds. Here are some of the seeds: [3]
+```
+
+#### tag &lt;tag&gt; &lt;tag2&gt; ...
+Compare the scores of the selected tags. Only the seeds that all the tags have in common will be compared. Examples:
+```
+>>> tag create solution1              # create tag "solution1"
+>>> 1 10                              # run the seeds 1-10 and store them under "solution1" tag
+
+( change source code of solution )
+>>> tag create solution2              # create tag "solution2"
+>>> 5 15                              # run the seeds 5-15 and store them under "solution2" tag
+>>> tag solution1 solution2           # compare the score of solutions on seeds 5-10 (these are the seeds they have in common)
+
+( chagnge source code again )
+>>> tag create solution3              # create tag "solution3"
+>>> 9 10                              # run the seeds 9-10 and store them under "solution3" tag
+>>> tag solution1 solution2 solution3 # compare the score of solutions on seeds 9-10
 ```
 
 #### tag create &lt;tag&gt;
@@ -180,24 +213,6 @@ Are you sure you want to delete tag "solution1"? [y/n]  y
 Tag "solution1" was deleted.
 ```
 
-#### tag cmp &lt;tag1&gt; &lt;tag2&gt; ...
-Compare the scores of the selected tags. Only the seeds that all the tags have in common will be compared. Examples:
-```
->>> tag create solution1              # create tag "solution1"
->>> 1 10                              # run the seeds 1-10 and store them under "solution1" tag
->>> tag cmp solution1                 # view the scores of solution1 on seeds 1-10
-
-( change source code of solution )
->>> tag create solution2              # create tag "solution2"
->>> 5 15                              # run the seeds 5-15 and store them under "solution2" tag
->>> tag cmp solution1 solution2       # compare the score of solutions on seeds 5-10 (these are the seeds they have in common)
-
-( chagnge source code again )
->>> tag create solution3              # create tag "solution3"
->>> 9 10                              # run the seeds 9-10 and store them under "solution3" tag
->>> tag cmp solution1 solution2 solution3  # compare the score of solutions on seeds 9-10
-```
-
 
 Tips and tricks
 ---------------
@@ -207,4 +222,4 @@ Tips and tricks
 - You can find log of the last multiple-tests run in *ColorLinkerMarat* directory, called *multiple_tests.log*.
 - When you run multiple tests, standard error output from your solution is not displayed. But lines starting with ```!``` are displayed, still.
 - Marathoner stores copies of all tagged source codes in ```ColorLinkerMarat/tags``` directory, so you can later return to them.
-- If you internally measure running time of your solution, output to standard error a line in format: ```Run time = <run_time>```. Marathoner will use this time instead of the one it measures externally, which is not entirely precise.
+- If you internally measure running time of your solution, output to standard error a line in format: ```Run time = <run_time>```. Marathoner will use this time instead of the one it measures externally, which can be rather imprecise.

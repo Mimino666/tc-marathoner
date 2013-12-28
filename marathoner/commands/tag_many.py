@@ -9,12 +9,13 @@ from marathoner.utils.print_table import print_table
 
 
 class Command(BaseCommand):
-    syntax = 'tag cmp <tag1> <tag2> ...'
+    syntax = 'tag <tag> <tag2> ...'
     help = 'compare the scores of selected tags'
 
-    cmd_re = re.compile(r'^\s*tag\s+cmp\s+(\w+(?:\s+\w+)*)\s*$', re.IGNORECASE)
+    cmd_re = re.compile(r'^\s*tags?\s+(\w+(?:\s+\w+)+)\s*$', re.IGNORECASE)
     def is_match(self, command):
-        return self.cmd_re.match(command)
+        match = self.cmd_re.match(command)
+        return match and match.group(1).split()[0] not in ('create', 'delete')
 
     def handle(self, command):
         match = self.cmd_re.match(command)
@@ -38,7 +39,7 @@ class Command(BaseCommand):
         #   Seed | <tag1> | <tag2> | ... | Best score
         header = [['Seed'] + [tag.name for tag in tags] + ['Best']]
         table = []
-        relative_score = [0] * len(tags)
+        relative_score = [0.0] * len(tags)
         num_absolute_best = [0] * len(tags)
         num_best = [0] * len(tags)
 
@@ -67,6 +68,7 @@ class Command(BaseCommand):
         names = [[''] + [tag.name for tag in tags] + ['Best']]
         footer = [
             ['Relative'] + ['%.5f' % x for x in relative_score] + [len(seeds)],
+            ['Average'] + ['%.5f' % (x/len(seeds)) for x in relative_score] + ['1.00'],
             ['# (*)'] + num_best + ['/'],
             ['# (+)'] + num_absolute_best + ['/'],
         ]
