@@ -1,5 +1,5 @@
-version_info = (1, 2, 1)
-__version__ = '1.2.1'
+version_info = (1, 2, 2)
+__version__ = '1.2.2'
 
 
 MARATHONER_PORT = 47231
