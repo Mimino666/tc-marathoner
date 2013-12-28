@@ -69,26 +69,22 @@ class Project(object):
         self.scores = Scores(self, self.data_path('scores.txt'))
         self.contest = Contest(self)
 
-        # init tags
-        self.tags = {}  # map tag name to tag instance
-        self.hash_to_tag = {}  # map source hash to tag instance
+        # collect available source codes in tag directory
+        sources = {}
+        for filename in os.listdir(self.tags_dir):
+            base, ext = path.splitext(filename)
+            if ext != '.score':
+                sources[path.basename(base)] = filename
+        # initialize available tags
         for filename in os.listdir(self.tags_dir):
             base, ext = path.splitext(filename)
             if ext == '.score':
                 name = path.basename(base)
-                tag = Tag(self, name)
+                source_filename = sources.get(name)
+                if source_filename is None:
+                    raise ConfigError('Tag "%s" doesn\'t have any source code associated with it.' % name)
+                tag = Tag(self, name, source_filename)
                 self.scores.update(tag.scores)
-
-    def add_tag(self, tag):
-        if tag.source_hash in self.hash_to_tag:
-            raise ConfigError('Sources of tags "%s" and "%s" are the same.' %
-                              (tag.name, self.hash_to_tag[tag.source_hash].name))
-        self.tags[tag.name] = tag
-        self.hash_to_tag[tag.source_hash] = tag
-
-    def remove_tag(self, tag):
-        del self.tags[tag.name]
-        del self.hash_to_tag[tag.source_hash]
 
     def data_path(self, path_, create_dirs=False):
         '''If path is relative, return the given path inside the project dir,
@@ -106,6 +102,10 @@ class Project(object):
         with open(filename, 'rb') as f:
             md5.update(f.read())
         return md5.hexdigest()
+
+    @property
+    def tags(self):
+        return Tag.name_to_tag
 
     @property
     def tags_dir(self):
@@ -129,7 +129,7 @@ class Project(object):
         '''Return the current instance of Tag, based on the current hash
         of the source code.
         '''
-        return self.hash_to_tag.get(self.source_hash)
+        return Tag.hash_to_tag.get(self.source_hash)
 
     def clean_solution(self, value):
         parsed_value = shlex.split(value)

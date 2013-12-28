@@ -27,7 +27,7 @@ class Command(BaseCommand):
             return
         elif tag is None:
             print_('Creating new tag "%s".' % name)
-            Tag(self.project, name, create_new=True)
+            Tag(self.project, name)
         elif tag.source_hash != self.project.source_hash:
             user_input = get_input('Tag "%s" already exists and its source code is different. '
                                    'Should I overwrite it (scores will be kept)? [y/n]' % name, 'yn')
