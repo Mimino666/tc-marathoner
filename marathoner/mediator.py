@@ -37,6 +37,8 @@ class Mediator(object):
         self.testcase_file = None
         if self.testcase:
             self.testcase_file = open(self.testcase, 'w')
+        # lines received from the solution (later redirected to visualizer)
+        self.solution_line_buffer = []
 
     def run(self):
         self.solution_proc = start_process(self.solution)
@@ -73,6 +75,11 @@ class Mediator(object):
         self.sock.shutdown(socket.SHUT_RDWR)
         self.sock.close()
 
+        # write output to visualizer
+        for line in self.solution_line_buffer:
+            sys.stdout.write(line)
+        sys.stdout.flush()
+
     def _visualizer_input_cb(self, line):
         '''Read input from visualizer and redirect it to the solution.
         Also export the input data to testcase file, if available.
@@ -85,10 +92,9 @@ class Mediator(object):
             self.testcase_file.flush()
 
     def _solution_output_cb(self, line):
-        '''Read output from the solution and redirect it to the visualizer.
+        '''Read output from the solution and store it for later use.
         '''
-        sys.stdout.write(line)
-        sys.stdout.flush()
+        self.solution_line_buffer.append(line)
 
     def _solution_error_cb(self, line):
         '''Read standard error output from the solution and redirect it back to

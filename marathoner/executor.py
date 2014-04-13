@@ -112,6 +112,8 @@ class Executor(object):
             return (None, self.visualizer_stdout, self.solution_stderr)
         else:
             raw_score = self.contest.extract_score(self.visualizer_stdout, self.solution_stderr)
+            if raw_score is None:
+                return (None, self.visualizer_stdout, self.solution_stderr)
             score = Score(seed, raw_score, self.run_time)
             if score is None:
                 raise RuntimeError('Unable to extract score from seed %s' % seed)
