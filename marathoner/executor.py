@@ -139,7 +139,9 @@ class Executor(object):
             self.project.vis if is_single_test else self.project.novis]
         special_params = shlex.split(special_params)
         seed_params = ['-seed', '%s' % seed]
-        return exec_params + self.project.params + special_params + seed_params
+        params = exec_params + self.project.params + special_params + seed_params
+        params = [p for p in params if p]
+        return params
 
     def kill_solution_listener_start(self):
         '''Start a new thread listening for kill-solution event (press "Q")
