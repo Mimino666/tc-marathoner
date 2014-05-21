@@ -7,19 +7,19 @@ Marathoner is a command line tool for effective local testing of solutions for [
 Features
 --------
 
-- Cross-platform: Windows, Linux, Mac OS X. Written in Python.
-- Works with visualizer .jar files, so it doesn't require any changes to your solution code.
+- Works with solutions written in C++, C#, Java, Python, VB.
 - VERY simple interface.
   To run your solution on seed 5 just type: ```5```.
   To run your solution on first 100 seeds, just type: ```1 100```.
 - Keeps track of the best scores for each seed, so you can compare your solutions locally.
 - Exports input data from visualizer into file, so you can debug on them.
+- and many more...
 
 
 Installation
 ------------
 
-Get Python at [http://www.python.org](http://www.python.org) (versions 2.6, 2.7 and 3.x are supported).
+Marathoner is written in Python, so first get some Python at [http://www.python.org](http://www.python.org) (versions 2.6, 2.7 and 3.x are supported).
 
 If you have *pip* Python package manager installed, run: ```pip install marathoner```. To upgrade for a newer version, run: ```pip install marathoner --upgrade```.
 
@@ -29,37 +29,41 @@ Or download the source code from GitHub and from *tc-marathoner* directory run: 
 Getting started
 ---------------
 
-Let me show you how to setup Marathoner for a recent Marathon Match called [ColorLinker](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=34370&rd=15825).
+Let me show you how to setup Marathoner for a recent Marathon Match called [RectanglesAndHoles](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=40847&rd=15982).
 
-1. Download the visualizer [ColorLinkerVis.jar](http://www.topcoder.com/contest/problem/ColorLinker/v2/ColorLinkerVis.jar).
+1. Download the visualizer [RectanglesAndHolesVis.jar](http://www.topcoder.com/contest/problem/RectanglesAndHoles/RectanglesAndHolesVis.jar).
    Create a solution that communicates with visualizer as described [here](http://apps.topcoder.com/forums/?module=Thread&threadID=670892&start=0)
-   and make sure your solution works by running: ```java -jar ColorLinkerVis.jar -exec "<command>" -seed 1```
+   and make sure your solution works by running:
 
-2. From command line run: ```marathoner new ColorLinkerMarat```.
+   ```java -jar RectanglesAndHolesVis.jar -exec "<command>" -seed 1```
 
-   In your current directory Marathoner will create a new directory named *ColorLinkerMarat* where it will
-   store all its work files related to ColorLinker match.
+2. From command line run: ```marathoner new RectanglesAndHolesMarat```
 
-3. Go into newly created directory *ColorLinkerMarat* and edit *marathoner.cfg* file.
+   In your current directory Marathoner will create a new directory named *RectanglesAndHolesMarat* where it will
+   store all its work files related to RectanglesAndHoles match.
+
+3. Go into newly created directory *RectanglesAndHolesMarat* and edit *marathoner.cfg* file.
    Fill out its contents as described in comments inside the file. Here is an example of my *marathoner.cfg* file for this match:
 
    ```
    [marathoner]
-   visualizer = c:\Users\Mimino\ColorLinker\ColorLinkerVis.jar
-   solution = "c:\Users\Mimino\ColorLinker\ColorLinker.exe"
-   source = c:\Users\Mimino\ColorLinker\ColorLinker.cpp
-   testcase = c:\Users\Mimino\ColorLinker\testcase.txt
-   maximize = false
+   visualizer = c:\Users\Mimino\RectanglesAndHoles\RectanglesAndHolesVis.jar
+   solution = "c:\Users\Mimino\RectanglesAndHoles\RectanglesAndHoles.exe"
+   source = c:\Users\Mimino\RectanglesAndHoles\RectanglesAndHoles.cpp
+   testcase = c:\Users\Mimino\RectanglesAndHoles\testcase.txt
+   maximize = true
    novis = -novis
    vis =
-   params = -side 10
+   params = -sz 1000
    ```
 
-4. While still in *ColorLinkerMarat* directory, from command line run: ```marathoner run```.
+4. While still in *RectanglesAndHolesMarat* directory, from command line run: ```marathoner run```.
    If everything is okay, you should see a welcome message and the command line prompt. Try to run:
    ```
    >>> 1
    Running single test 1...
+   Holes count (Cnt) = 12345
+   Holes area (Area) = 6789
    Score = 123456.0
            Run time: 0.14
            New score: 1234567.00
@@ -78,14 +82,14 @@ Basic commands
 Run single test with visualization. Examples:
 ```
 >>> 5                   # run seed 5
->>> 5 -side 15          # run seed 5 with additional visualizer option "-side 15"
+>>> 5 -sz 500           # run seed 5 with additional visualizer option "-sz 500"
 ```
 
 #### &lt;seed1&gt; &lt;seed2&gt; [vis params]
 Run multiple tests with seeds from interval *seed1*-*seed2*, inclusive. Visualization is turned off. Examples:
 ```
 >>> 1 100               # run seeds from interval 1-100, inclusive
->>> 1 100 -side 15      # run seeds from interval 1-100, inclusive, with additional visualizer option "-side 15"
+>>> 1 100 -sz 500       # run seeds from interval 1-100, inclusive, with additional visualizer option "-sz 500"
 ```
 
 #### best [seed1] [seed2]
@@ -112,13 +116,13 @@ Tagging of solutions
 Once you have implemented a solution that you plan to run on a large number
 of tests you can *tag* the solution, before you do so:
 ```
->>> tag create my_solution             # tag the current solution with name "my_solution"
+>>> tag create my_solution             # create a tag from the current solution and name it "my_solution"
 ```
 Marathoner will compute the hash of your current source code (you specified path to your source code in .cfg file)
 and store it under the name "*my_solution*". Now whenever you run some tests,
 Marathoner will check the hash of your current source code against the hashes
-of the source codes that you have already tagged. If there is a match, Marathoner will
-store the results of the tests under the matched tag name.
+of the source codes that you have already tagged. If there is a match between the hashes,
+Marathoner will store the results of the tests under the matched tag name.
 ```
 >>> tag                                 # display the list of existing tags
 |-----------------|---------------------|
@@ -156,7 +160,7 @@ Print the list of existing tags. Examples:
 (*) means current active tag
 ```
 
-#### tag &lt;tag&gt;
+#### tag &lt;tag_name&gt;
 Print the scores of the selected tag. Exmaples:
 ```
 >>> tag my_solution
@@ -172,7 +176,7 @@ Average relative score: 0.66567
 You have scored zero points on 1 seeds. Here are some of the seeds: [3]
 ```
 
-#### tag &lt;tag&gt; &lt;tag2&gt; ...
+#### tag &lt;tag_name1&gt; &lt;tag_name2&gt; ...
 Compare the scores of the selected tags. Only the seeds that all the tags have in common will be compared. Examples:
 ```
 >>> tag create solution1              # create tag "solution1"
@@ -189,8 +193,8 @@ Compare the scores of the selected tags. Only the seeds that all the tags have i
 >>> tag solution1 solution2 solution3 # compare the score of solutions on seeds 9-10
 ```
 
-#### tag create &lt;tag&gt;
-Tag the current solution with the given name. Examples:
+#### tag create &lt;tag_name&gt;
+Create a tag from the current solution and name it *tag_name*. Examples:
 ```
 >>> tag create solution1                # tag the current solution with name "solution1"
 >>> 1 10                                # run the seeds 1-10 and store them under "solution1" tag
@@ -219,7 +223,7 @@ Tips and tricks
 
 - If your solution gets stuck, press ```q``` to easily terminate it. If you are running multiple tests, it terminates the whole execution (best scores of already run tests are still saved, though).
 - If your solution crashes on some seed and you want to debug it, you can find input data of this seed in file specified by *testcase* field in *marathoner.cfg*.
-- You can find log of the last multiple-tests run in *ColorLinkerMarat* directory, called *multiple_tests.log*.
+- You can find log of the last multiple-tests run in *RectanglesAndHolesMarat* directory, called *multiple_tests.log*.
 - When you run multiple tests, standard error output from your solution is not displayed. But lines starting with ```!``` are displayed, still.
-- Marathoner stores copies of all tagged source codes in ```ColorLinkerMarat/tags``` directory, so you can later return to them.
+- Marathoner stores copies of all tagged source codes in ```RectanglesAndHolesMarat/tags``` directory, so you can later return to them.
 - If you internally measure running time of your solution, output to standard error a line in format: ```Run time = <run_time>```. Marathoner will use this time instead of the one it measures externally, which can be rather imprecise.
