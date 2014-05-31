@@ -30,6 +30,7 @@ class Project(object):
         'novis': False,
         'vis': False,
         'params': False,
+        'cache': False,
     }
 
     # fields, that should point to existing files
@@ -131,6 +132,17 @@ class Project(object):
         '''
         return Tag.hash_to_tag.get(self.source_hash)
 
+    @property
+    def cache_dir(self):
+        path_ = path.join('cache', self.source_hash)
+        return self.data_path(path_, create_dirs=True)
+
+    def get_cache_stdout_fn(self, seed):
+        return path.join(self.cache_dir, '%s_stdout' % seed)
+
+    def get_cache_stderr_fn(self, seed):
+        return path.join(self.cache_dir, '%s_stderr' % seed)
+
     def clean_solution(self, value):
         parsed_value = shlex.split(value)
         # try to run the solution to check if it works
@@ -163,6 +175,13 @@ class Project(object):
         value = value.lower()
         if value not in ['true', 'false']:
             raise ConfigError('Value for "maximize" field in marathoner.cfg '
+                              'has to be either "true" or "false".')
+        return value == 'true'
+
+    def clean_cache(self, value):
+        value = value.lower()
+        if value not in ['true', 'false']:
+            raise ConfigError('Value for "cache" field in marathoner.cfg '
                               'has to be either "true" or "false".')
         return value == 'true'
 

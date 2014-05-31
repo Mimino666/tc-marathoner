@@ -34,8 +34,8 @@ class Executor(object):
 
     def run(self, seed, is_single_test, special_params=''):
         '''Run visualizer on the chosen seed number.
-        Return standart output received from visualizer and standard error
-        output received from solution.
+        Returns extracted score, standard output received from visualizer and
+        standard error output received from solution.
 
         @param seed: seed number
         @type seed: int
@@ -76,7 +76,10 @@ class Executor(object):
         # initialize mediator
         mediator_settings = {
             'testcase': self.project.testcase,
-            'solution': self.project.solution}
+            'solution': self.project.solution,
+            'cache': self.project.cache,
+            'cache_stdout_fn': self.project.get_cache_stdout_fn(seed),
+            'cache_stderr_fn': self.project.get_cache_stderr_fn(seed)}
         pickle.dump(mediator_settings, self.socket_writer)
         self.socket_writer.flush()
         self.solution_pid = pickle.load(self.socket_reader)
@@ -140,7 +143,7 @@ class Executor(object):
         special_params = shlex.split(special_params)
         seed_params = ['-seed', '%s' % seed]
         params = exec_params + self.project.params + special_params + seed_params
-        params = [p for p in params if p]
+        params = [p for p in params if p]  # clean params of empty values
         return params
 
     def kill_solution_listener_start(self):
@@ -163,7 +166,8 @@ class Executor(object):
 
     def _kill_solution(self):
         try:
-            os.kill(self.solution_pid, signal.SIGTERM)
+            if self.solution_pid:
+                os.kill(self.solution_pid, signal.SIGTERM)
         except:
             pass
         self.solution_killed = True
