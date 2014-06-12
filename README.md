@@ -3,6 +3,13 @@ Marathoner
 
 Marathoner is a command line tool for effective local testing of solutions for [Marathon Match competitions](http://community.topcoder.com/longcontest/?module=ViewActiveContests) organized by [TopCoder Inc.](http://www.topcoder.com/)
 
+- [Features](https://github.com/Mimino666/tc-marathoner#features)
+- [Installation](https://github.com/Mimino666/tc-marathoner#installation)
+- [Getting started](https://github.com/Mimino666/tc-marathoner#getting-started)
+- [Basic commands](https://github.com/Mimino666/tc-marathoner#basic-commands)
+- [Tagging of solutions](https://github.com/Mimino666/tc-marathoner#tagging-of-solutions)
+- [Tips and tricks](https://github.com/Mimino666/tc-marathoner#tips-and-tricks)
+
 
 Features
 --------
@@ -13,6 +20,7 @@ Features
   To run your solution on first 100 seeds, just type: ```1 100```.
 - Keeps track of the best scores for each seed, so you can compare your solutions locally.
 - Exports input data from visualizer into file, so you can debug on them.
+- (**NEW**) Caches the output of your solution, so you don't have to wait again when running the same code on the same seed.
 - and many more...
 
 
@@ -55,6 +63,7 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [Rect
    novis = -novis
    vis =
    params = -sz 1000
+   cache = true
    ```
 
 4. While still in *RectanglesAndHolesMarat* directory, from command line run: ```marathoner run```.
@@ -143,8 +152,9 @@ and you want to compare them against each other, simply run the command:
 >>> tag my_solution other_solution      # compare the scores of tags "my_solution" and "other_solution"
 ```
 
-Note: Be careful when you change the source code of your solution and don't compile it.
-Marathoner will still run the old code, but the hash of the source file will be different.
+**WARNING**: When you change the source code of your solution and don't compile it,
+Marathoner will still run the old solution, but the hash of the source file will be different.
+I.e. the solution will not run with the correct tag name.
 
 
 #### tag
