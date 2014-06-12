@@ -7,6 +7,7 @@ from marathoner.scores import Scores
 
 
 class Tag(object):
+    # static variables
     name_to_tag = {}  # map tag name to tag instance
     hash_to_tag = {}  # map source hash to tag instance
 

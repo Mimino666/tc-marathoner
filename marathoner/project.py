@@ -119,11 +119,20 @@ class Project(object):
         '''Return the hash of the current version of source code.
         Cache the hash value, between the changes of the file.
         '''
+        if self._source_hash_transaction:
+            return self._source_hash_transaction
         mtime = path.getmtime(self.source)
         if mtime != self._source_mtime:
             self._source_mtime = mtime
             self._source_hash = self.hash_of_file(self.source)
         return self._source_hash
+
+    _source_hash_transaction = None
+    def source_hash_transaction_begin(self):
+        self._source_hash_transaction = self.source_hash
+
+    def source_hash_transaction_end(self):
+        self._source_hash_transaction = None
 
     @property
     def current_tag(self):

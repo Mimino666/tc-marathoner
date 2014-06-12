@@ -19,12 +19,13 @@ class Command(BaseCommand):
         seed1 = int(match.group(1))
         seed2 = int(match.group(2))
         vis_params = match.group(3) or ''
-        tag = self.project.current_tag
 
         if seed2 < seed1:
             print_('Error: seed1 can\'t be larger than seed2!')
             return
 
+        self.project.source_hash_transaction_begin()
+        tag = self.project.current_tag
         self.contest.multiple_tests_starting(seed2-seed1+1)
         tests_run = 0
         self.executor.kill_solution_listener_start()
@@ -45,3 +46,4 @@ class Command(BaseCommand):
         if tag:
             tag.scores.save()
         self.contest.multiple_tests_ending(tests_run)
+        self.project.source_hash_transaction_end()
