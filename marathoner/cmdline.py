@@ -8,6 +8,7 @@ from six.moves import input
 
 import marathoner
 from marathoner.commands import collect_commands
+from marathoner.commands.base import CommandSyntaxError
 from marathoner.executor import Executor
 from marathoner.project import Project, ConfigError
 
@@ -53,7 +54,10 @@ def run_marathoner(args):
             continue
         for cmd in commands:
             if cmd.is_match(user_input):
-                cmd.handle(user_input)
+                try:
+                    cmd.handle(user_input)
+                except CommandSyntaxError:
+                    print_('Syntax: %s' % cmd.syntax)
                 break
         else:
             print_('Unrecognized command. Type "help" to see the list of available commands.')

@@ -1,3 +1,7 @@
+class CommandSyntaxError(Exception):
+    pass
+
+
 class BaseCommand(object):
     syntax = ''
     help = ''

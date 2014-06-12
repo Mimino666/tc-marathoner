@@ -2,7 +2,7 @@ import re
 
 from six import print_
 
-from marathoner.commands.base import BaseCommand
+from marathoner.commands.base import BaseCommand, CommandSyntaxError
 from marathoner.utils.user_input import get_input
 
 
@@ -11,11 +11,15 @@ class Command(BaseCommand):
     help = 'delete the selected tag'
 
     cmd_re = re.compile(r'^\s*tag\s+delete\s+(\w+)\s*$', re.IGNORECASE)
+    match_re = re.compile(r'^\s*tag\s+delete\b', re.IGNORECASE)
+
     def is_match(self, command):
-        return self.cmd_re.match(command)
+        return self.match_re.match(command)
 
     def handle(self, command):
         match = self.cmd_re.match(command)
+        if not match:
+            raise CommandSyntaxError
         name = match.group(1)
         tag = self.project.tags.get(name)
 
