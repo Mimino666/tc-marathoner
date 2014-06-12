@@ -10,7 +10,6 @@ This injection allows to:
   - better handling of crash of user's solution
   - killing of stuck user's solution (by pressing "q")
 '''
-from os import path
 import pickle
 import socket
 import sys
@@ -42,8 +41,7 @@ class Mediator(object):
         if self.testcase:
             self.testcase_file = open(self.testcase, 'w')
 
-        if (self.cache and path.exists(self.cache_stdout_fn) and
-                path.exists(self.cache_stderr_fn)):
+        if self.use_cache:
             self.run_from_cache()
         else:
             self.run_for_real()

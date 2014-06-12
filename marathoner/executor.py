@@ -52,6 +52,15 @@ class Executor(object):
         self.run_time = None
         self.solution_stderr, self.visualizer_stdout = [], []
 
+        if self.project.cache:
+            cache_stdout_fn = self.project.get_cache_stdout_fn(seed)
+            cache_stderr_fn = self.project.get_cache_stderr_fn(seed)
+            use_cache = (os.path.exists(cache_stdout_fn) and
+                         os.path.exists(cache_stderr_fn))
+        else:
+            cache_stdout_fn = cache_stderr_fn = None
+            use_cache = False
+
         # start visualizer
         params = self.get_visualizer_params(seed, is_single_test, special_params)
         self.visualizer_proc = start_process(params)
@@ -77,9 +86,9 @@ class Executor(object):
         mediator_settings = {
             'testcase': self.project.testcase,
             'solution': self.project.solution,
-            'cache': self.project.cache,
-            'cache_stdout_fn': self.project.get_cache_stdout_fn(seed),
-            'cache_stderr_fn': self.project.get_cache_stderr_fn(seed)}
+            'use_cache': use_cache,
+            'cache_stdout_fn': cache_stdout_fn,
+            'cache_stderr_fn': cache_stderr_fn}
         pickle.dump(mediator_settings, self.socket_writer)
         self.socket_writer.flush()
         self.solution_pid = pickle.load(self.socket_reader)
@@ -112,6 +121,12 @@ class Executor(object):
         conn.close()
 
         if self.solution_crashed or self.solution_killed:
+            # delete partially filled cache
+            if self.project.cache and not use_cache:
+                if os.path.exists(cache_stdout_fn):
+                    os.remove(cache_stdout_fn)
+                if os.path.exists(cache_stderr_fn):
+                    os.remove(cache_stderr_fn)
             return (None, self.visualizer_stdout, self.solution_stderr)
         else:
             raw_score = self.contest.extract_score(self.visualizer_stdout, self.solution_stderr)
