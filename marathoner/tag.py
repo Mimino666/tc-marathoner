@@ -24,6 +24,9 @@ class Tag(object):
         self.source_hash = project.hash_of_file(self.source_filename)
         Tag.add_tag(self)
 
+    def __str__(self):
+        return self.name
+
     def delete(self):
         if path.exists(self.scores_filename):
             os.remove(self.scores_filename)
