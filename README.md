@@ -15,11 +15,10 @@ Features
 --------
 
 - Works with solutions written in C++, C#, Java, Python, VB.
-- VERY simple interface.
-  To run your solution on seed 5 just type: ```5```.
-  To run your solution on first 100 seeds, just type: ```1 100```.
+- Simple way to run your solution on big number of test cases.
+  To run on the first hundred seeds, just type: ```1 100```.
 - Keeps track of the best scores for each seed, so you can compare your solutions locally.
-- Exports input data from visualizer into file, so you can debug on them.
+- Exports input data from visualizer into external file, so you can debug on them.
 - (**NEW**) Caches the output of your solution, so you don't have to wait again when running the same code on the same seed.
 - and many more...
 
