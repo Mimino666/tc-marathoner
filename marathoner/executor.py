@@ -121,8 +121,8 @@ class Executor(object):
         self.socket_writer.close()
         conn.close()
 
-        # write to run.log
-        with open(self.project.data_path('run.log'), 'a') as run_log:
+        # write to log
+        with open(self.project.data_path('log'), 'a') as run_log:
             run_log.write('%s Hash: %s Tag: %s Failed: %s From cache: %s\n' %
                 (datetime.now(), self.project.source_hash, self.project.current_tag,
                  not (self.solution_crashed or self.solution_killed), use_cache))
