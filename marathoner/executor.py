@@ -89,7 +89,8 @@ class Executor(object):
             'solution': self.project.solution,
             'use_cache': use_cache,
             'cache_stdout_fn': cache_stdout_fn,
-            'cache_stderr_fn': cache_stderr_fn}
+            'cache_stderr_fn': cache_stderr_fn,
+            'visualizer': os.path.basename(self.project.visualizer)}
         pickle.dump(mediator_settings, self.socket_writer)
         self.socket_writer.flush()
         self.solution_pid = pickle.load(self.socket_reader)

@@ -13,7 +13,10 @@ This injection allows to:
 import pickle
 import socket
 import sys
+import threading
 import time
+
+from six.moves import xrange
 
 from marathoner import MARATHONER_PORT, MARATHONER_END_OF_OUTPUT
 from marathoner.utils.async_reader import AsyncReader
@@ -38,6 +41,7 @@ class Mediator(object):
 
         # create the testcase file, if needed
         self.testcase_file = None
+        self.testcase_lock = threading.Lock()
         if self.testcase:
             self.testcase_file = open(self.testcase, 'w')
 
@@ -48,7 +52,8 @@ class Mediator(object):
 
         # close the resources
         if self.testcase_file:
-            self.testcase_file.close()
+            with self.testcase_lock:
+                self.testcase_file.close()
         self.socket_reader.close()
         self.socket_writer.close()
         self.sock.shutdown(socket.SHUT_RDWR)
@@ -63,12 +68,10 @@ class Mediator(object):
         pickle.dump(None, self.socket_writer)  # dummy pid
         self.socket_writer.flush()
 
-        visualizer_input_reader = AsyncReader(sys.stdin, self._visualizer_input_cache_cb)
-        visualizer_input_reader.setDaemon(True)
-        visualizer_input_reader.start()
-        time.sleep(0.1)  # wait to read input from visualizer, to store it in testcase file
+        if self.testcase_file:
+            self._start_visualizer_input_reader(self._visualizer_input_cache_cb)
+            time.sleep(0.1)  # wait to read input from visualizer, to store it in testcase file
 
-        # read stderr
         self.socket_writer.write('[NOTE] Running solution from cache\n'.encode('utf-8'))
         with open(self.cache_stderr_fn, 'rb') as f:
             self.socket_writer.write(f.read())
@@ -87,11 +90,9 @@ class Mediator(object):
         self.socket_writer.flush()
 
         # setup redirections
-        visualizer_input_reader = AsyncReader(sys.stdin, self._visualizer_input_cb)
-        visualizer_input_reader.setDaemon(True)
         solution_output_reader = AsyncReader(self.solution_proc.stdout, self._solution_output_cb)
         solution_error_reader = AsyncReader(self.solution_proc.stderr, self._solution_error_cb)
-        visualizer_input_reader.start()
+        self._start_visualizer_input_reader(self._visualizer_input_cb)
         solution_output_reader.start()
         solution_error_reader.start()
         start_time = time.time()
@@ -117,21 +118,50 @@ class Mediator(object):
                 for line in self.solution_stderr_buffer:
                     f.write(line)
 
-    def _visualizer_input_cb(self, line):
+    def _start_visualizer_input_reader(self, input_cb):
+        # speedup the reader for custom visualizers
+        if self.visualizer == 'CollageMakerVis.jar':
+            line = sys.stdin.readline()
+            input_cb(line, flush=False)
+            for i in xrange(int(line)):
+                line = sys.stdin.readline()
+                input_cb(line, flush=False)
+            input_cb('', flush=True)
+        else:
+            visualizer_input_reader = AsyncReader(sys.stdin, input_cb)
+            visualizer_input_reader.setDaemon(True)
+            visualizer_input_reader.start()
+
+    def _visualizer_input_cb(self, line, flush=True):
         '''Read input from visualizer and redirect it to the solution.
         Also export the input data to testcase file, if available.
         '''
-        if self.solution_proc.poll() is None:
+        if flush:
+            if self.solution_proc.poll() is None:
+                self.solution_proc.stdin.write(line)
+                self.solution_proc.stdin.flush()
+            if self.testcase_file:
+                with self.testcase_lock:
+                    if not self.testcase_file.closed:
+                        self.testcase_file.write(line)
+                        self.testcase_file.flush()
+        else:
+            # if we are not flushing, it means we are reading synchronously and
+            # for speedup purposes we don't do any .poll() or .closed checks
             self.solution_proc.stdin.write(line)
-            self.solution_proc.stdin.flush()
-        if self.testcase_file and not self.testcase_file.closed:
-            self.testcase_file.write(line)
-            self.testcase_file.flush()
+            if self.testcase_file:
+                self.testcase_file.write(line)
 
-    def _visualizer_input_cache_cb(self, line):
-        if self.testcase_file and not self.testcase_file.closed:
-            self.testcase_file.write(line)
-            self.testcase_file.flush()
+    def _visualizer_input_cache_cb(self, line, flush=True):
+        if flush:
+            if self.testcase_file:
+                with self.testcase_lock:
+                    if not self.testcase_file.closed:
+                        self.testcase_file.write(line)
+                        self.testcase_file.flush()
+        else:
+            if self.testcase_file:
+                self.testcase_file.write(line)
 
     def _solution_output_cb(self, line):
         '''Read output from the solution and store it for later use.
