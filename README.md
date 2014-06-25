@@ -36,42 +36,42 @@ Or download the source code from GitHub and from *tc-marathoner* directory run: 
 Getting started
 ---------------
 
-Let me show you how to setup Marathoner for a recent Marathon Match called [RectanglesAndHoles](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=40847&rd=15982).
+Let me show you how to setup Marathoner for a recent Marathon Match called [CollageMaker](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=41598&rd=16012).
 
-1. Download the visualizer [RectanglesAndHolesVis.jar](http://www.topcoder.com/contest/problem/RectanglesAndHoles/RectanglesAndHolesVis.jar).
-   Create a solution that communicates with visualizer as described [here](http://apps.topcoder.com/forums/?module=Thread&threadID=670892&start=0)
+1. Download the visualizer [CollageMakerVis.jar](http://community.topcoder.com/contest/problem/CollageMaker/CollageMakerVis.jar).
+   Create a solution that communicates with visualizer as described [here](http://community.topcoder.com/contest/problem/CollageMaker/manual.html)
    and make sure your solution works by running:
 
-   ```java -jar RectanglesAndHolesVis.jar -exec "<command>" -seed 1```
+   ```java -jar CollageMakerVis.jar -exec "<command>" -seed 1```
 
-2. From command line run: ```marathoner new RectanglesAndHolesMarat```
+2. From command line run: ```marathoner new CollageMakerMarat```
 
-   In your current directory Marathoner will create a new directory named *RectanglesAndHolesMarat* where it will
-   store all its work files related to RectanglesAndHoles match.
+   In your current directory Marathoner will create a new directory named *CollageMakerMarat* where it will
+   store all its work files related to CollageMaker match.
 
-3. Go into newly created directory *RectanglesAndHolesMarat* and edit *marathoner.cfg* file.
+3. Go into newly created directory *CollageMakerMarat* and edit *marathoner.cfg* file.
    Fill out its contents as described in comments inside the file. Here is an example of my *marathoner.cfg* file for this match:
 
    ```
    [marathoner]
-   visualizer = c:\Users\Mimino\RectanglesAndHoles\RectanglesAndHolesVis.jar
-   solution = "c:\Users\Mimino\RectanglesAndHoles\RectanglesAndHoles.exe"
-   source = c:\Users\Mimino\RectanglesAndHoles\RectanglesAndHoles.cpp
-   testcase = c:\Users\Mimino\RectanglesAndHoles\testcase.txt
-   maximize = true
+   visualizer = c:\Mimino\CollageMaker\CollageMakerVis.jar
+   solution = "c:\Mimino\CollageMaker\CollageMaker.exe"
+   source = c:\Mimino\CollageMaker\CollageMaker.cpp
+   # For this match I recommend to leave "testcase" field empty.
+   # CollageMaker testcase is 6MB big and can slow things down.
+   testcase = c:\Mimino\CollageMaker\testcase.txt
+   maximize = false
    novis = -novis
    vis =
-   params = -sz 1000
+   params = -target "c:\Mimino\CollageMaker\dataset\300px" -source "c:\Mimino\CollageMaker\dataset\100px"
    cache = true
    ```
 
-4. While still in *RectanglesAndHolesMarat* directory, from command line run: ```marathoner run```.
+4. While still in *CollageMakerMarat* directory, from command line run: ```marathoner run```.
    If everything is okay, you should see a welcome message and the command line prompt. Try to run:
    ```
    >>> 1
    Running single test 1...
-   Holes count (Cnt) = 12345
-   Holes area (Area) = 6789
    Score = 123456.0
            Run time: 0.14
            New score: 1234567.00
@@ -232,7 +232,7 @@ Tips and tricks
 
 - If your solution gets stuck, press ```q``` to easily terminate it. If you are running multiple tests, it terminates the whole execution (best scores of already run tests are still saved, though).
 - If your solution crashes on some seed and you want to debug it, you can find input data of this seed in file specified by *testcase* field in *marathoner.cfg*.
-- You can find log of the last multiple-tests run in *RectanglesAndHolesMarat* directory, called *multiple_tests.log*.
+- You can find log of the last multiple-tests run in *CollageMakerMarat* directory, called *multiple_tests.log*.
 - When you run multiple tests, standard error output from your solution is not displayed. But lines starting with ```!``` are displayed, still.
-- Marathoner stores copies of all tagged source codes in ```RectanglesAndHolesMarat/tags``` directory, so you can later return to them.
+- Marathoner stores copies of all tagged source codes in ```CollageMakerMarat/tags``` directory, so you can later return to them.
 - If you internally measure running time of your solution, output to standard error a line in format: ```Run time = <run_time>```. Marathoner will use this time instead of the one it measures externally, which can be rather imprecise.
