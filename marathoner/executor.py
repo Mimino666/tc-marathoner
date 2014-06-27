@@ -126,7 +126,7 @@ class Executor(object):
         with open(self.project.data_path('log'), 'a') as run_log:
             run_log.write('%s Hash: %s Tag: %s Failed: %s From cache: %s\n' %
                 (datetime.now(), self.project.source_hash, self.project.current_tag,
-                 not (self.solution_crashed or self.solution_killed), use_cache))
+                 self.solution_crashed or self.solution_killed, use_cache))
 
         if self.solution_crashed or self.solution_killed:
             # delete partially filled cache
