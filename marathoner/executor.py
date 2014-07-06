@@ -107,12 +107,14 @@ class Executor(object):
         visualizer_stdout_reader.join()
         visualizer_stderr_reader.join()
 
-        # raw run time
-        raw_run_time = pickle.load(self.socket_reader)
+        try:
+            raw_run_time = pickle.load(self.socket_reader)
+            exit_code = pickle.load(self.socket_reader)
+        except EOFError:
+            raw_run_time = 0.0
+            exit_code = -1
         if self.run_time is None:
             self.run_time = raw_run_time
-        # exit code
-        exit_code = pickle.load(self.socket_reader)
         if exit_code and not self.solution_killed:
             print_('WARNING: Your solution ended with non-zero code: %s' % get_signal_name(exit_code))
             self.solution_crashed = True
