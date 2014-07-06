@@ -36,6 +36,8 @@ class Project(object):
     # fields, that should point to existing files
     EXISTING_FILE_FIELDS = frozenset(['visualizer', 'source'])
 
+    STRIP_QUOTES = ['visualizer', 'source', 'testcase']
+
     def __init__(self, root_path='.'):
         self.project_dir = path.abspath(root_path)
         self.project_name = path.basename(self.project_dir)
@@ -51,6 +53,8 @@ class Project(object):
             value = cfg.get('marathoner', field_name)
             if not value and required:
                 raise ConfigError('Field "%s" in marathoner.cfg is required.' % field_name)
+            if value and field_name in self.STRIP_QUOTES:
+                value = value.strip('\'"')
             # clean field value
             clean_func_name = 'clean_%s' % field_name
             if hasattr(self, clean_func_name):
