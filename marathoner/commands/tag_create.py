@@ -9,7 +9,7 @@ from marathoner.utils.user_input import get_input
 
 class Command(BaseCommand):
     syntax = 'tag create <tag>'
-    help = 'create a new tag of your current solution'
+    help = 'tag the current solution with name <tag>'
 
     cmd_re = re.compile(r'^\s*tag\s+create\s+(\w+)\s*$', re.IGNORECASE)
     match_re = re.compile(r'^\s*tag\s+create\b', re.IGNORECASE)
