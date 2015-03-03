@@ -41,6 +41,7 @@ class Command(BaseCommand):
         if table:
             table.sort(key=itemgetter(3))
             print_table(header, table)
+            print_()
             if current_tag:
                 print_('(*) means current active tag')
             print_('(!) means the best average relative score')

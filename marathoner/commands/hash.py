@@ -7,7 +7,7 @@ from marathoner.commands.base import BaseCommand, CommandSyntaxError
 
 class Command(BaseCommand):
     syntax = 'hash [<tag>]'
-    help = 'output the current or selected tag\'s hash'
+    help = 'output the hash of the current or selected tag'
 
     cmd_re = re.compile(r'^\s*hash(?:\s+(\w+))?\s*$', re.IGNORECASE)
     match_re = re.compile(r'^\s*hash\b', re.IGNORECASE)
