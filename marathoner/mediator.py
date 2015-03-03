@@ -59,7 +59,10 @@ class Mediator(object):
         self.sock.shutdown(socket.SHUT_RDWR)
         self.sock.close()
 
-        # write output to visualizer
+        # write output to visualizer - it is crucial to write the data to visualizer
+        # as the last step. Once the visualizer receives the data, it closes
+        # the Mediator process and therefore not allow us to do all the other
+        # stuff like caching and storing the testcase data into the file.
         for line in self.solution_stdout_buffer:
             sys.stdout.write(line)
         sys.stdout.flush()
@@ -72,6 +75,7 @@ class Mediator(object):
             self._start_visualizer_input_reader(self._visualizer_input_cache_cb)
             time.sleep(0.1)  # wait to read input from visualizer, to store it in testcase file
 
+        # send stderr from the solution to Marathoner
         self.socket_writer.write('[NOTE] Running solution from cache\n'.encode('utf-8'))
         with open(self.cache_stderr_fn, 'rb') as f:
             self.socket_writer.write(f.read())
@@ -164,7 +168,7 @@ class Mediator(object):
                 self.testcase_file.write(line)
 
     def _solution_output_cb(self, line):
-        '''Read output from the solution and store it for later use.
+        '''Read output from the solution and store it in buffer.
         '''
         self.solution_stdout_buffer.append(line)
 
