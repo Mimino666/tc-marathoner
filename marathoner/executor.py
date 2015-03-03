@@ -18,6 +18,10 @@ from marathoner.utils.ossignal import get_signal_name, install_shutdown_handlers
 from marathoner.utils.proc import start_process
 
 
+class ExecutorError(Exception):
+    pass
+
+
 class Executor(object):
     run_time_re = re.compile(r'^\s*Run\s+time\s*=\s*(\d+(?:[.,]\d+)?)\s*$')
 
@@ -33,7 +37,7 @@ class Executor(object):
     def __del__(self):
         self.sock.close()
 
-    def run(self, seed, is_single_test, special_params=''):
+    def run(self, seed, is_single_test, special_params='', source_hash=None):
         '''Run visualizer on the chosen seed number.
         Returns extracted score, standard output received from visualizer and
         standard error output received from solution.
@@ -46,6 +50,9 @@ class Executor(object):
 
         @param special_params: additional params to pass to visualizer
         @type special_params: string
+
+        @param source_hash: use it to force running a cached solution
+        @type source_hash: string (source hash) or None
         '''
         self.is_single_test = is_single_test
         self.solution_killed = False
@@ -54,10 +61,14 @@ class Executor(object):
         self.solution_stderr, self.visualizer_stdout = [], []
 
         if self.project.cache:
-            cache_stdout_fn = self.project.get_cache_stdout_fn(seed)
-            cache_stderr_fn = self.project.get_cache_stderr_fn(seed)
+            cache_stdout_fn = self.project.get_cache_stdout_fn(seed, source_hash)
+            cache_stderr_fn = self.project.get_cache_stderr_fn(seed, source_hash)
             use_cache = (os.path.exists(cache_stdout_fn) and
                          os.path.exists(cache_stderr_fn))
+            if source_hash and not use_cache:
+                print_('WARNING: Cached solution for seed %s does not exist.' % seed)
+                self.solution_crashed = True
+                return (None, [], [])
         else:
             cache_stdout_fn = cache_stderr_fn = None
             use_cache = False
@@ -126,8 +137,10 @@ class Executor(object):
 
         # write to log
         with open(self.project.data_path('log'), 'a') as run_log:
-            run_log.write('%s Hash: %s Tag: %s Failed: %s From cache: %s\n' %
-                (datetime.now(), self.project.source_hash, self.project.current_tag,
+            run_log.write('%s Seed: %s Run time: %s Hash: %s Tag: %s Failed: %s From cache: %s\n' %
+                (datetime.now(), seed, self.run_time,
+                 source_hash or self.project.source_hash,
+                 self.project.current_tag,
                  self.solution_crashed or self.solution_killed, use_cache))
 
         if self.solution_crashed or self.solution_killed:
@@ -143,8 +156,6 @@ class Executor(object):
             if raw_score is None:
                 return (None, self.visualizer_stdout, self.solution_stderr)
             score = Score(seed, raw_score, self.run_time)
-            if score is None:
-                raise RuntimeError('Unable to extract score from seed %s' % seed)
             return (score, self.visualizer_stdout, self.solution_stderr)
 
     def shutdown_handler(self, signum, _):

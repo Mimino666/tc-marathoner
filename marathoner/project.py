@@ -132,37 +132,38 @@ class Project(object):
         return self._source_hash
 
     _source_hash_transaction = None
-    def source_hash_transaction_begin(self):
-        self._source_hash_transaction = self.source_hash
+    def source_hash_transaction_begin(self, source_hash=None):
+        self._source_hash_transaction = (source_hash or self.source_hash)
 
     def source_hash_transaction_end(self):
         self._source_hash_transaction = None
 
     @property
     def current_tag(self):
-        '''Return the current instance of Tag, based on the current hash
-        of the source code.
+        '''Return the instance of Tag, based on the hash of the current source code.
         '''
         return Tag.hash_to_tag.get(self.source_hash)
 
-    @property
-    def cache_dir(self):
-        path_ = path.join('cache', self.source_hash)
+    def get_cache_dir(self, source_hash=None):
+        path_ = path.join('cache', source_hash or self.source_hash)
         return self.data_path(path_, create_dirs=True)
 
-    def get_cache_stdout_fn(self, seed):
-        return path.join(self.cache_dir, '%s_stdout' % seed)
+    def get_cache_stdout_fn(self, seed, source_hash=None):
+        return path.join(self.get_cache_dir(source_hash), '%s_stdout' % seed)
 
-    def get_cache_stderr_fn(self, seed):
-        return path.join(self.cache_dir, '%s_stderr' % seed)
+    def get_cache_stderr_fn(self, seed, source_hash=None):
+        return path.join(self.get_cache_dir(source_hash), '%s_stderr' % seed)
 
+    # clean fields in .cfg file
     def clean_solution(self, value):
         parsed_value = shlex.split(value)
         # try to run the solution to check if it works
         try:
             solution_proc = start_process(parsed_value)
         except:
-            raise ConfigError('Field "solution" in marathoner.cfg is not properly configured. Try to run from command line:\n    %s' % value)
+            raise ConfigError(
+                'Field "solution" in marathoner.cfg is not properly configured. '
+                'Copy and run the following command and see where is the problem:\n    %s' % value)
 
         time.sleep(0.5)
         code = solution_proc.poll()
