@@ -17,7 +17,7 @@ class UsageError(Exception):
     pass
 
 
-def new_marathoner(args):
+def new_marathoner_command(args):
     if len(args) != 1:
         raise UsageError('Exactly one argument is required.')
     project_name = args[0]
@@ -33,13 +33,14 @@ def new_marathoner(args):
     shutil.copytree(templates_path, project_name)
 
 
-def run_marathoner(args):
+def run_marathoner_command(args):
     project = Project(args[0] if args else '.')
     executor = Executor(project)
     commands = [cmd(project, executor) for cmd in itervalues(collect_commands())]
 
-    print_('Welcome to Marathoner! Type "help" for any help.')
-    print_('You are now working on project', project.project_name)
+    print_('Welcome to Marathoner %s!' % marathoner.__version__)
+    print_('You are now working on project "%s".' % project.project_name)
+    print_('Type "help" to see the list of available commands.')
 
     try:  # readline module is only available on unix systems
         import readline
@@ -65,8 +66,8 @@ def run_marathoner(args):
 
 
 available_commands = {
-    'new': (new_marathoner, '<project_name>', 'Create a new marathoner project.'),
-    'run': (run_marathoner, '[path_to_project]', 'Run existing marathoner project.')
+    'new': (new_marathoner_command, '<project_name>', 'Create a new marathoner project.'),
+    'run': (run_marathoner_command, '[path_to_project]', 'Run existing marathoner project.')
 }
 
 
@@ -96,7 +97,7 @@ def execute(argv=None):
     cmd_name, args = argv[1], argv[2:]
     if cmd_name not in available_commands:
         print_('Unknown command: %s\n' % cmd_name)
-        print_('Use "marathoner" to see available commands')
+        print_('Type "marathoner" to see the available commands.')
         sys.exit(2)
     cmd_func = available_commands[cmd_name][0]
 
