@@ -7,7 +7,7 @@ from marathoner.commands.base import BaseCommand, CommandSyntaxError
 
 
 class Command(BaseCommand):
-    syntax = 'cached <tag> <seed> [vis params]'
+    syntax = 'cached <tag> <seed> [<vis params>]'
     help = 'run a cached solution of the selected tag'
 
     cmd_re = re.compile(r'^\s*cached\s+(\w+)(?:\s+(\d+)(?:\s+([^\d\s].*))?)?\s*$', re.IGNORECASE)

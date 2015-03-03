@@ -4,7 +4,7 @@ from marathoner.commands.base import BaseCommand
 
 
 class Command(BaseCommand):
-    syntax = '<seed> [vis params]'
+    syntax = '<seed> [<vis params>]'
     help = 'run single test with visualization'
 
     cmd_re = re.compile(r'^\s*(\d+)(?:\s+([^\d\s].*))?\s*$', re.IGNORECASE)

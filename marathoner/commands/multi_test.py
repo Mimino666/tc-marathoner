@@ -7,7 +7,7 @@ from marathoner.commands.base import BaseCommand
 
 
 class Command(BaseCommand):
-    syntax = '<seed1> <seed2> [vis params]'
+    syntax = '<seed1> <seed2> [<vis params>]'
     help = 'run batch of tests from interval [seed1, seed2]'
 
     cmd_re = re.compile(r'^\s*(\d+)\s+(\d+)(?:\s+([^\d\s].*))?\s*$', re.IGNORECASE)

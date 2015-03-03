@@ -93,21 +93,21 @@ Congratulations, you are now ready to compete!
 Basic commands
 --------------
 
-#### &lt;seed&gt; [vis params]
+#### &lt;seed&gt; [&lt;vis params&gt;]
 Run single test with visualization. Examples:
 ```
 >>> 5                   # run seed 5
 >>> 5 -sz 500           # run seed 5 with additional visualizer option "-sz 500"
 ```
 
-#### &lt;seed1&gt; &lt;seed2&gt; [vis params]
+#### &lt;seed1&gt; &lt;seed2&gt; [&lt;vis params&gt;]
 Run multiple tests with seeds from interval *seed1*-*seed2*, inclusive. Visualization is turned off. Examples:
 ```
 >>> 1 100               # run seeds from interval 1-100, inclusive
 >>> 1 100 -sz 500       # run seeds from interval 1-100, inclusive, with additional visualizer option "-sz 500"
 ```
 
-#### best [seed1] [seed2]
+#### best [&lt;seed1&gt;] [&lt;seed2&gt;]
 Print the best scores for the seeds. Examples:
 ```
 >>> best                # print the best scores for all the known seeds
