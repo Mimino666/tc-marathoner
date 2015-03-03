@@ -16,15 +16,33 @@ class Command(BaseCommand):
         return self.cmd_re.match(command)
 
     def handle(self, command):
-        header = [['Tag', 'Created']]
+        header = [['Tag', 'Seeds', 'Avg. score', 'Created']]
         current_tag = self.project.current_tag
-        table = [(('(*) ' if current_tag is tag else '') + tag.name,
-                  tag.time_created.strftime('%Y-%m-%d %X'))
-                 for tag in itervalues(self.project.tags)]
+        table = []
+        best_score = 0.0
+        for tag in itervalues(self.project.tags):
+            avg_score = tag.get_avg_relative_score()
+            best_score = max(best_score, avg_score)
+            row = [
+                ('(*) ' if current_tag is tag else '') + tag.name,
+                len(tag.scores),
+                avg_score,
+                tag.time_created.strftime('%Y-%m-%d %X')]
+            table.append(row)
+
+        # format avg scores
+        for row in table:
+            avg_score = row[2]
+            if avg_score == best_score:
+                row[2] = '(!) %.5f' % avg_score
+            else:
+                row[2] = '%.5f' % avg_score
+
         if table:
-            table.sort(key=itemgetter(1), reverse=True)
+            table.sort(key=itemgetter(3))
             print_table(header, table)
             if current_tag:
                 print_('(*) means current active tag')
+                print_('(!) means the best average relative score')
         else:
             print_('You haven\'t created any tags, yet.')

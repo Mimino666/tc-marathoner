@@ -46,7 +46,7 @@ class Command(BaseCommand):
 
         print_table(header, table, header)
         print_()
-        num_tests = len(tag.scores.seeds)
+        num_tests = len(tag.scores)
         print_('Relative score of "%s" tag on %s tests: %.5f' % (tag_name, num_tests, score_sum))
         if num_tests:
             print_('Average relative score: %.5f' % (score_sum / num_tests))

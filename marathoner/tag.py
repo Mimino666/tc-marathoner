@@ -3,7 +3,7 @@ import os
 from os import path
 from shutil import copyfile
 
-from marathoner.scores import Scores
+from marathoner.scores import Score, Scores
 
 
 class Tag(object):
@@ -39,6 +39,18 @@ class Tag(object):
         self.source_hash = self.project.source_hash
         copyfile(self.project.source, self.source_filename)
         Tag.add_tag(self)
+
+    def get_avg_relative_score(self):
+        if not len(self.scores):
+            return 0.0
+
+        score_sum = 0.0
+        for seed in self.scores.seeds:
+            score_sum += Score.relative_score(
+                self.project.maximize,
+                self.scores[seed],
+                self.project.scores[seed])
+        return score_sum / len(self.scores)
 
     @property
     def time_created(self):

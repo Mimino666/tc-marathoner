@@ -69,6 +69,9 @@ class Scores(object):
             with open(scores_file, 'w') as f:
                 pass
 
+    def __len__(self):
+        return len(self.best_scores)
+
     def __getitem__(self, seed):
         return self.best_scores.get(seed, Score(seed, 0.0))
 
