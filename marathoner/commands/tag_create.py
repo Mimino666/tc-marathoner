@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
         if tag_by_hash and tag_by_hash != tag:
             print_('Current version of your source code already has a different tag: "%s". '
-                   'Delete it first.' % tag_by_hash.tag_name)
+                   'Delete it first.' % tag_by_hash.name)
             return
         elif tag is None:
             print_('Creating new tag "%s".' % tag_name)
