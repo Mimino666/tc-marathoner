@@ -57,7 +57,8 @@ def run_marathoner(args):
                 try:
                     cmd.handle(user_input)
                 except CommandSyntaxError:
-                    print_('Syntax: %s' % cmd.syntax)
+                    print_('Help:   ', cmd.help)
+                    print_('Syntax: ', cmd.syntax)
                 break
         else:
             print_('Unrecognized command. Type "help" to see the list of available commands.')
