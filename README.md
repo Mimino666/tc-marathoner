@@ -34,6 +34,7 @@ Installation
 Marathoner is written in Python, so first get some Python at [http://www.python.org](http://www.python.org) (versions 2.6, 2.7 and 3.x are supported).
 
 If you have *pip* (Python package manager) installed, run: ```$ pip install marathoner```.
+
 To update Marathoner to newer version, run: ```$ pip install marathoner --upgrade```.
 
 Or download the source code from GitHub and from *tc-marathoner* directory run: ```$ python setup.py install```.
@@ -251,16 +252,16 @@ Compare the scores of the selected tags. Only the seeds that all the tags have i
 ( change source code of solution )
 >>> tag create solution2              # tag the another solution with name "solution2"
 >>> 5 15                              # run the seeds 5-15 and store them under "solution2" tag
->>> tag solution1 solution2           # compare the scores of seeds 5-10 (these are the seeds they have in common)
+>>> tag solution1 solution2           # compare the scores of seeds 5-10 (the ones they have in common)
 |----------|-------------|-------------|---------|
 |     Seed |   solution1 |   solution2 |    Best |
 |----------|-------------|-------------|---------|
 |        5 |   (+) 10.00 |        9.00 |   10.00 |
 ...
-|       15 |      121.00 |  (+) 123.00 |  123.00 |
+|       10 |      121.00 |  (+) 123.00 |  123.00 |
 |----------|-------------|-------------|---------|
-| Relative |     8.66398 |     9.58193 |      11 |
-|  Average |     0.78763 |     0.87108 |    1.00 |
+| Relative |     4.33199 |     4.79096 |       6 |
+|  Average |     0.72199 |     0.79849 |    1.00 |
 |    # (*) |           2 |           5 |       / |
 |    # (+) |           1 |           1 |       / |
 |----------|-------------|-------------|---------|
