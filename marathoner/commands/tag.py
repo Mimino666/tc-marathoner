@@ -43,6 +43,6 @@ class Command(BaseCommand):
             print_table(header, table)
             if current_tag:
                 print_('(*) means current active tag')
-                print_('(!) means the best average relative score')
+            print_('(!) means the best average relative score')
         else:
             print_('You haven\'t created any tags, yet.')
