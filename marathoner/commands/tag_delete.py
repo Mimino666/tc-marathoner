@@ -30,3 +30,5 @@ class Command(BaseCommand):
             if user_input == 'y':
                 tag.delete()
                 print_('Tag "%s" was deleted.' % tag_name)
+            else:
+                print_('Skipping...')
