@@ -17,10 +17,10 @@ class Command(BaseCommand):
         return match and match.group(1) not in ('create', 'delete')
 
     def handle(self, command):
-        name = self.cmd_re.match(command).group(1)
-        tag = self.project.tags.get(name)
+        tag_name = self.cmd_re.match(command).group(1)
+        tag = self.project.tags.get(tag_name)
         if tag is None:
-            print_('Tag "%s" doesn\'t exist.' % name)
+            print_('Tag "%s" doesn\'t exist.' % tag_name)
             return
 
         # prepare the data for table
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         print_table(header, table, header)
         print_()
         num_tests = len(tag.scores.seeds)
-        print_('Relative score of "%s" tag on %s tests: %.5f' % (name, num_tests, score_sum))
+        print_('Relative score of "%s" tag on %s tests: %.5f' % (tag_name, num_tests, score_sum))
         if num_tests:
             print_('Average relative score: %.5f' % (score_sum / num_tests))
         if zero_seeds:

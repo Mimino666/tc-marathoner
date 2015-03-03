@@ -20,13 +20,13 @@ class Command(BaseCommand):
         match = self.cmd_re.match(command)
         if not match:
             raise CommandSyntaxError
-        name = match.group(1)
-        tag = self.project.tags.get(name)
+        tag_name = match.group(1)
+        tag = self.project.tags.get(tag_name)
 
         if tag is None:
-            print_('Tag "%s" doesn\'t exist.' % name)
+            print_('Tag "%s" doesn\'t exist.' % tag_name)
         else:
-            user_input = get_input('Are you sure you want to delete tag "%s"? [y/n]' % name, 'yn')
+            user_input = get_input('Are you sure you want to delete tag "%s"? [y/n]' % tag_name, 'yn')
             if user_input == 'y':
                 tag.delete()
-                print_('Tag "%s" was deleted.' % name)
+                print_('Tag "%s" was deleted.' % tag_name)

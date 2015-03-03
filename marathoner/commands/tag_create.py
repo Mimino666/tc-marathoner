@@ -21,25 +21,25 @@ class Command(BaseCommand):
         match = self.cmd_re.match(command)
         if not match:
             raise CommandSyntaxError
-        name = match.group(1)
-        tag = self.project.tags.get(name)
+        tag_name = match.group(1)
+        tag = self.project.tags.get(tag_name)
         tag_by_hash = self.project.current_tag
 
         if tag_by_hash and tag_by_hash != tag:
             print_('Current version of your source code already has a different tag: "%s". '
-                   'Delete it first.' % tag_by_hash.name)
+                   'Delete it first.' % tag_by_hash.tag_name)
             return
         elif tag is None:
-            print_('Creating new tag "%s".' % name)
-            Tag(self.project, name)
+            print_('Creating new tag "%s".' % tag_name)
+            Tag(self.project, tag_name)
         elif tag.source_hash != self.project.source_hash:
             user_input = get_input('Tag "%s" already exists and its source code is different. '
-                                   'Should I overwrite it (scores will be kept)? [y/n]' % name, 'yn')
+                                   'Should I overwrite it (scores will be kept)? [y/n]' % tag_name, 'yn')
             if user_input == 'n':
                 return
             else:
-                print_('Overwritting tag "%s" with the new source code.' % name)
+                print_('Overwritting tag "%s" with the new source code.' % tag_name)
                 tag.update()
         else:
-            print_('Tag "%s" already exists and no change in source code is detected.' % name)
+            print_('Tag "%s" already exists and no change in source code is detected.' % tag_name)
 

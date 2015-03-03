@@ -20,13 +20,13 @@ class Command(BaseCommand):
         if not match:
             raise CommandSyntaxError
 
-        name = match.group(1)
-        if name is None:
+        tag_name = match.group(1)
+        if tag_name is None:
             print_(self.project.source_hash)
         else:
-            tag = self.project.tags.get(name)
+            tag = self.project.tags.get(tag_name)
             if tag is None:
-                print_('Tag "%s" does not exist.' % name)
+                print_('Tag "%s" does not exist.' % tag_name)
             else:
                 print_(tag.source_hash)
 

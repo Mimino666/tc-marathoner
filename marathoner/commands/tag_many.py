@@ -21,10 +21,10 @@ class Command(BaseCommand):
         match = self.cmd_re.match(command)
         tags = []
         seeds = None
-        for name in match.group(1).split():
-            tag = self.project.tags.get(name)
+        for tag_name in match.group(1).split():
+            tag = self.project.tags.get(tag_name)
             if tag is None:
-                print_('Tag "%s" doesn\'t exist.' % name)
+                print_('Tag "%s" doesn\'t exist.' % tag_name)
                 return
             tags.append(tag)
             if seeds is None:
@@ -65,7 +65,7 @@ class Command(BaseCommand):
                     row.append('%.2f' % current_score.score)
             table.append([seed] + row + ['%.2f' % best_score.score])
 
-        names = [[''] + [tag.name for tag in tags] + ['Best']]
+        tag_names = [[''] + [tag.name for tag in tags] + ['Best']]
         footer = [
             ['Relative'] + ['%.5f' % x for x in relative_score] + [len(seeds)],
             ['Average'] + ['%.5f' % (x/len(seeds)) for x in relative_score] + ['1.00'],
@@ -73,7 +73,7 @@ class Command(BaseCommand):
             ['# (+)'] + num_absolute_best + ['/'],
         ]
 
-        print_table(header, table, names, footer)
+        print_table(header, table, tag_names, footer)
         print_()
         print_('(*) means the best score among the selected tags')
         print_('(+) means the absolute best score')
