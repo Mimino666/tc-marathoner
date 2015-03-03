@@ -12,9 +12,9 @@ class Contest(BaseContest):
 
     # formating strings used for outputing multi-test data
     header = ('Seed', 'Score', 'Best', 'Relative', 'Run time')
-    column_len = [5, 15, 15, 8, 8]
-    format = '| %s |' %  ' | '.join('%%%ss' % l for l in column_len)
-    hline = '|-%s-|' % '-|-'.join('-' * l for l in column_len)  # horizontal line
+    column_width = [5, 15, 15, 8, 8]
+    row_format = '| %s |' %  ' | '.join('%%%ss' % l for l in column_width)
+    hline = '|-%s-|' % '-|-'.join('-' * l for l in column_width)  # horizontal line
 
     def extract_score(self, visualizer_stdout, solution_stderr):
         for line in chain(visualizer_stdout, solution_stderr):
@@ -55,7 +55,7 @@ class Contest(BaseContest):
         self.zero_seeds = []
 
         self._write_line(self.hline)
-        self._write_line(self.format % self.header)
+        self._write_line(self.row_format % self.header)
         self._write_line(self.hline)
 
     def one_test_starting(self, seed):
@@ -71,7 +71,7 @@ class Contest(BaseContest):
             '%.2f' % best_score.score,
             '%.3f' % relative,
             '%.2f' % current_score.run_time)
-        self._write_line(self.format % data)
+        self._write_line(self.row_format % data)
 
     def _write_line(self, line):
         self.log_file.write(line + '\n')
@@ -80,7 +80,7 @@ class Contest(BaseContest):
 
     def multiple_tests_ending(self, num_tests):
         self._write_line(self.hline)
-        self._write_line(self.format % self.header)
+        self._write_line(self.row_format % self.header)
         self._write_line(self.hline)
         self._write_line('')
         self._write_line('Relative score on %s tests: %.5f' % (num_tests, self.score_sum))

@@ -5,10 +5,10 @@ class AsyncReader(threading.Thread):
     '''Asynchronously read lines from the stream and call the callback function
     for each line.
     '''
-    def __init__(self, stream, cb):
+    def __init__(self, stream, callback):
         super(AsyncReader, self).__init__()
         self.stream = stream
-        self.cb = cb
+        self.callback = callback
 
     def run(self):
         while True:
@@ -18,5 +18,5 @@ class AsyncReader(threading.Thread):
                 return
             if not line:
                 return
-            if self.cb(line):
+            if self.callback(line):
                 return

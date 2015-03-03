@@ -18,19 +18,19 @@ def print_table(*tables):
 
     '''
     # calculate length for each column
-    col_len = [0] * len(tables[0][0])
-    def chlen(values):
-        for i, c in enumerate(values):
-            col_len[i] = max(col_len[i], len(str(c)))
+    column_width = [0] * len(tables[0][0])
+    def update_column_widths(row):
+        for i, data in enumerate(row):
+            column_width[i] = max(column_width[i], len(str(data)))
     for table in tables:
         for row in table:
-            chlen(row)
+            update_column_widths(row)
 
     # create formatting string
-    format = '| %s |' %  ' | '.join('%%%ss' % l for l in col_len)
-    hl = '|-%s-|' % '-|-'.join('-' * l for l in col_len)  # horizontal line
+    format = '| %s |' %  ' | '.join('%%%ss' % width for width in column_width)
+    hline = '|-%s-|' % '-|-'.join('-' * width for width in column_width)  # horizontal line
 
-    print_(hl)
+    print_(hline)
     for table in tables:
         print_('\n'.join(format % tuple(row) for row in table))
-        print_(hl)
+        print_(hline)
