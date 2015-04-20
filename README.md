@@ -43,18 +43,18 @@ Or download the source code from GitHub and from *tc-marathoner* directory run: 
 Getting started
 ---------------
 
-Let me show you how to setup Marathoner for a recent Marathon Match called [CollageMaker](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=41598&rd=16012).
+Let me show you how to setup Marathoner for a recent Marathon Match called [SmallPolygons](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=47276&rd=16445).
 
-1. Download the visualizer [CollageMakerVis.jar](http://community.topcoder.com/contest/problem/CollageMaker/CollageMakerVis.jar).
-   Create a solution that communicates with visualizer as described [here](http://community.topcoder.com/contest/problem/CollageMaker/manual.html)
+1. Download the visualizer [tester.jar](http://www.topcoder.com/contest/problem/SmallPolygons/tester.jar).
+   Create a solution that communicates with visualizer as described [here](http://www.topcoder.com/contest/problem/SmallPolygons/manual.html)
    and make sure your solution works by running:
 
-   ```$ java -jar CollageMakerVis.jar -exec "<command>" -seed 1```
+   ```$ java -jar tester.jar -exec "<command>" -seed 1```
 
-2. Run from the command line: ```$ marathoner new CollageMakerMarat```
+2. Run from the command line: ```$ marathoner new SmallPolygonsMarat```
 
-   Marathoner will create in the current directory a new project directory named *CollageMakerMarat*,
-   where it will store all the files related to CollageMaker match.
+   Marathoner will create in the current directory a new project directory named *SmallPolygonsMarat*,
+   where it will store all the files related to SmallPolygons match.
 
 3. Go into newly created project directory and edit *marathoner.cfg* file.
    Fill out its contents as described in the comments inside the file.
@@ -62,16 +62,14 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [Coll
 
    ```
    [marathoner]
-   visualizer = c:\Mimino\CollageMaker\CollageMakerVis.jar
-   solution = "c:\Mimino\CollageMaker\CollageMaker.exe"
-   source = c:\Mimino\CollageMaker\CollageMaker.cpp
-   # For this match I recommend to leave "testcase" field empty.
-   # CollageMaker testcase is 6MB big and can slow things down.
-   testcase = c:\Mimino\CollageMaker\testcase.txt
+   visualizer = c:\Mimino\SmallPolygons\tester.jar
+   solution = "c:\Mimino\SmallPolygons\SmallPolygons.exe"
+   source = c:\Mimino\SmallPolygons\SmallPolygons.cpp
+   testcase = c:\Mimino\SmallPolygons\testcase.txt
    maximize = false
-   novis = -novis
-   vis =
-   params = -target "c:\Mimino\CollageMaker\dataset\300px" -source "c:\Mimino\CollageMaker\dataset\100px"
+   novis =
+   vis = -vis
+   params = -debug
    cache = true
    ```
 
