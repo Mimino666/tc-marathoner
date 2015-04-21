@@ -174,7 +174,7 @@ class Executor(object):
     def get_visualizer_params(self, seed, is_single_test, special_params):
         exec_params = [
             'java', '-jar', self.project.visualizer,
-            '-exec', 'python ' + self.project.mediator,
+            '-exec', 'python "%s"' % self.project.mediator,
             self.project.vis if is_single_test else self.project.novis]
         special_params = shlex.split(special_params)
         seed_params = ['-seed', '%s' % seed]
