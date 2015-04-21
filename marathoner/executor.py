@@ -60,7 +60,7 @@ class Executor(object):
         self.run_time = None
         self.solution_stderr, self.visualizer_stdout = [], []
 
-        if self.project.cache:
+        if self.project.cache and seed:
             cache_stdout_fn = self.project.get_cache_stdout_fn(seed, source_hash)
             cache_stderr_fn = self.project.get_cache_stderr_fn(seed, source_hash)
             use_cache = (os.path.exists(cache_stdout_fn) and

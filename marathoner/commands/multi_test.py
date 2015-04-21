@@ -35,9 +35,10 @@ class Command(BaseCommand):
             if current_score is None:
                 print_('Stopping execution...')
                 break
-            self.project.scores[seed] = current_score
-            if tag:
-                tag.scores[seed] = current_score
+            if seed:
+                self.project.scores[seed] = current_score
+                if tag:
+                    tag.scores[seed] = current_score
             self.contest.one_test_ending(seed, visualizer_stdout, solution_stderr,
                                          self.project.scores[seed], current_score)
             tests_run += 1

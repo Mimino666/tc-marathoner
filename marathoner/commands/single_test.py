@@ -23,11 +23,12 @@ class Command(BaseCommand):
         current_score, visualizer_stdout, solution_stderr = self.executor.run(seed, True, vis_params)
         self.executor.kill_solution_listener_stop()
         if current_score is not None:
-            self.project.scores[seed] = current_score
-            self.project.scores.save()
-            if tag:
-                tag.scores[seed] = current_score
-                tag.scores.save()
+            if seed:
+                self.project.scores[seed] = current_score
+                self.project.scores.save()
+                if tag:
+                    tag.scores[seed] = current_score
+                    tag.scores.save()
             self.contest.single_test_ending(seed, visualizer_stdout, solution_stderr,
                                             self.project.scores[seed], current_score)
         self.project.source_hash_transaction_end()
