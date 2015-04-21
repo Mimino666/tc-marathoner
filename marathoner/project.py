@@ -163,16 +163,24 @@ class Project(object):
         except:
             raise ConfigError(
                 'Field "solution" in marathoner.cfg is not properly configured. '
-                'Copy and run the following command and see where is the problem:\n    %s' % value)
+                'Copy and run the following command to see where is the problem:\n\n\t%s' % value)
 
         time.sleep(0.5)
         code = solution_proc.poll()
+
+        error_msg = None
         if code:
-            raise ConfigError('Your solution program doesn\'t work. '
-                              'When we run it, it ends with non-zero code: %s' % get_signal_name(code))
+            error_msg = 'it ends with non-zero code: %s' % get_signal_name(code)
         elif code is not None:
-            raise ConfigError('Your solution program doesn\'t work. '
-                              'When we run it, it immediatelly ends.')
+            error_msg = 'it doesn\'t wait for the input and immediately ends.'
+        if error_msg:
+            error_msg = 'Your solution doesn\'t work - ' + error_msg
+            stdout, stderr = solution_proc.communicate()
+            if stdout:
+                error_msg += '\n\nStandard output:\n\t' + stdout
+            if stderr:
+                error_msg += '\n\nStandard error output:\n\t' + stderr
+            raise ConfigError(error_msg)
 
         solution_proc.kill()
         return parsed_value
