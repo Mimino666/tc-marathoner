@@ -29,7 +29,7 @@ def _windows_key_press(wanted_key, stop_event, received_cb):
     wanted_key = wanted_key.lower()
     while not stop_event.is_set():
         if msvcrt.kbhit():
-            c = msvcrt.getch().decode('utf-8')
+            c = msvcrt.getwch()
             if c.lower() == wanted_key:
                 received_cb()
                 break
