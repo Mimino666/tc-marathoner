@@ -29,7 +29,7 @@ def _windows_key_press(wanted_key, stop_event, received_cb):
     wanted_key = wanted_key.lower()
     while not stop_event.is_set():
         if msvcrt.kbhit():
-            c = msvcrt.getch()
+            c = msvcrt.getch().decode('utf-8')
             if c.lower() == wanted_key:
                 received_cb()
                 break
@@ -57,8 +57,8 @@ def _linux_key_press(wanted_key, stop_event, received_cb):
         tty.setcbreak(sys.stdin.fileno())
         while not stop_event.is_set():
             if is_data():
-                c = sys.stdin.read(1).lower()
-                if c == wanted_key:
+                c = sys.stdin.read(1).decode('utf-8')
+                if c.lower() == wanted_key:
                     received_cb()
                     break
             else:
