@@ -71,9 +71,8 @@ class Mediator(object):
         pickle.dump(None, self.socket_writer)  # dummy pid
         self.socket_writer.flush()
 
-        if self.testcase_file:
-            self._start_visualizer_input_reader(self._visualizer_input_cache_cb)
-            time.sleep(0.1)  # wait to read input from visualizer, to store it in testcase file
+        self._start_visualizer_input_reader(self._visualizer_input_cache_cb)
+        time.sleep(0.1)  # wait to read input from visualizer, to store it in testcase file
 
         # send stderr from the solution to Marathoner
         self.socket_writer.write('[NOTE] Running solution from cache\n'.encode('utf-8'))
@@ -130,6 +129,15 @@ class Mediator(object):
             for i in xrange(int(line)):
                 line = sys.stdin.readline()
                 input_cb(line, flush=False)
+            input_cb('', flush=True)
+        elif self.visualizer == 'tester.jar':  # SmallPolygons
+            line = sys.stdin.readline()
+            input_cb(line, flush=False)
+            for i in xrange(int(line)):
+                line = sys.stdin.readline()
+                input_cb(line, flush=False)
+            line = sys.stdin.readline()
+            input_cb(line, flush=False)
             input_cb('', flush=True)
         else:
             visualizer_input_reader = AsyncReader(sys.stdin, input_cb)
