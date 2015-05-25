@@ -96,6 +96,7 @@ class Executor(object):
         self.socket_writer = conn.makefile('wb')
         # initialize mediator
         mediator_settings = {
+            'project_name': self.project.project_name,
             'testcase': self.project.testcase,
             'solution': self.project.solution,
             'use_cache': use_cache,
@@ -121,7 +122,7 @@ class Executor(object):
         try:
             raw_run_time = pickle.load(self.socket_reader)
             exit_code = pickle.load(self.socket_reader)
-        except EOFError:
+        except (EOFError, socket.error):
             raw_run_time = 0.0
             exit_code = -1
         if self.run_time is None:

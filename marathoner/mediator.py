@@ -16,8 +16,6 @@ import sys
 import threading
 import time
 
-from six.moves import xrange
-
 from marathoner import MARATHONER_PORT, MARATHONER_END_OF_OUTPUT
 from marathoner.utils.async_reader import AsyncReader
 from marathoner.utils.proc import start_process
@@ -35,8 +33,17 @@ class Mediator(object):
         settings = pickle.load(self.socket_reader)
         self.__dict__.update(settings)
 
+        # choose communicator
+        if self.project_name == 'PathDefenseMarat' or self.visualizer == 'tester.jar':
+            from marathoner.communicators.path_defense_communicator import PathDefenseCommunicator
+            self.communicator = PathDefenseCommunicator()
+        else:
+            from marathoner.communicators.general_communicator import GeneralCommunicator
+            self.communicator = GeneralCommunicator()
+
         # lines received from the solution
         self.solution_stdout_buffer = []
+        self.solution_stdout_index = 0
         self.solution_stderr_buffer = []
 
         # create the testcase file, if needed
@@ -60,48 +67,52 @@ class Mediator(object):
         self.sock.close()
 
         # write output to visualizer - it is crucial to write the data to visualizer
-        # as the last step. Once the visualizer receives the data, it closes
+        # as the last step. Once the visualizer receives all the data, it closes
         # the Mediator process and therefore not allow us to do all the other
         # stuff like caching and storing the testcase data into the file.
-        for line in self.solution_stdout_buffer:
-            sys.stdout.write(line)
+        while self.solution_stdout_index < len(self.solution_stdout_buffer):
+            sys.stdout.write(self.solution_stdout_buffer[self.solution_stdout_index])
+            self.solution_stdout_index += 1
         sys.stdout.flush()
 
     def run_from_cache(self):
         pickle.dump(None, self.socket_writer)  # dummy pid
         self.socket_writer.flush()
 
-        self._start_visualizer_input_reader(self._visualizer_input_cache_cb)
-        time.sleep(0.1)  # wait to read input from visualizer, to store it in testcase file
-
         # send stderr from the solution to Marathoner
         self.socket_writer.write('[NOTE] Running solution from cache\n'.encode('utf-8'))
-        with open(self.cache_stderr_fn, 'rb') as f:
-            self.socket_writer.write(f.read())
+        with open(self.cache_stderr_fn, 'rb') as stderrf:
+            self.socket_writer.write(stderrf.read())
         self.socket_writer.write(MARATHONER_END_OF_OUTPUT.encode('utf-8'))
         pickle.dump(0.0, self.socket_writer)  # dummy run time
         pickle.dump(0, self.socket_writer) # dummy exit code
         self.socket_writer.flush()
 
-        with open(self.cache_stdout_fn, 'r') as f:
-            for line in f:
-                self.solution_stdout_buffer.append(line)
+        with open(self.cache_stdout_fn, 'r') as stdoutf:
+            try:
+                self.communicator.communicate(
+                    sys.stdin, stdoutf,
+                    self._visualizer_input_cache_cb, self._solution_output_cb)
+            except:
+                pass
+        time.sleep(0.1)  # wait to read input from visualizer, to store it in testcase file
 
     def run_for_real(self):
         self.solution_proc = start_process(self.solution)
         pickle.dump(self.solution_proc.pid, self.socket_writer)
         self.socket_writer.flush()
 
-        # setup redirections
-        solution_output_reader = AsyncReader(self.solution_proc.stdout, self._solution_output_cb)
         solution_error_reader = AsyncReader(self.solution_proc.stderr, self._solution_error_cb)
-        self._start_visualizer_input_reader(self._visualizer_input_cb)
-        solution_output_reader.start()
         solution_error_reader.start()
         start_time = time.time()
+        try:
+            self.communicator.communicate(
+                sys.stdin, self.solution_proc.stdout,
+                self._visualizer_input_cb, self._solution_output_cb)
+        except:
+            pass
         self.solution_proc.wait()
         end_time = time.time()
-        solution_output_reader.join()
         solution_error_reader.join()
 
         # signalize end of stderr output
@@ -120,29 +131,6 @@ class Mediator(object):
             with open(self.cache_stderr_fn, 'w') as f:
                 for line in self.solution_stderr_buffer:
                     f.write(line)
-
-    def _start_visualizer_input_reader(self, input_cb):
-        # speedup the reader for custom visualizers
-        if self.visualizer == 'CollageMakerVis.jar':
-            line = sys.stdin.readline()
-            input_cb(line, flush=False)
-            for i in xrange(int(line)):
-                line = sys.stdin.readline()
-                input_cb(line, flush=False)
-            input_cb('', flush=True)
-        elif self.visualizer == 'tester.jar':  # SmallPolygons
-            line = sys.stdin.readline()
-            input_cb(line, flush=False)
-            for i in xrange(int(line)):
-                line = sys.stdin.readline()
-                input_cb(line, flush=False)
-            line = sys.stdin.readline()
-            input_cb(line, flush=False)
-            input_cb('', flush=True)
-        else:
-            visualizer_input_reader = AsyncReader(sys.stdin, input_cb)
-            visualizer_input_reader.setDaemon(True)
-            visualizer_input_reader.start()
 
     def _visualizer_input_cb(self, line, flush=True):
         '''Read input from visualizer and redirect it to the solution.
@@ -164,7 +152,7 @@ class Mediator(object):
             if self.testcase_file:
                 self.testcase_file.write(line)
 
-    def _visualizer_input_cache_cb(self, line, flush=True):
+    def _visualizer_input_cache_cb(self, line, flush):
         if flush:
             if self.testcase_file:
                 with self.testcase_lock:
@@ -175,10 +163,15 @@ class Mediator(object):
             if self.testcase_file:
                 self.testcase_file.write(line)
 
-    def _solution_output_cb(self, line):
+    def _solution_output_cb(self, line, flush):
         '''Read output from the solution and store it in buffer.
         '''
         self.solution_stdout_buffer.append(line)
+        if flush:
+            while self.solution_stdout_index < len(self.solution_stdout_buffer):
+                sys.stdout.write(self.solution_stdout_buffer[self.solution_stdout_index])
+                self.solution_stdout_index += 1
+            sys.stdout.flush()
 
     def _solution_error_cb(self, line):
         '''Read standard error output from the solution and redirect it back to
