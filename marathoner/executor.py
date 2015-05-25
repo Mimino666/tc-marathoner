@@ -172,9 +172,13 @@ class Executor(object):
         sys.exit(signum)
 
     def get_visualizer_params(self, seed, is_single_test, special_params):
+        mediator_path = self.project.mediator
+        if ' ' in mediator_path:
+            mediator_path = '"%s"' % mediator_path
+
         exec_params = [
             'java', '-jar', self.project.visualizer,
-            '-exec', 'python "%s"' % self.project.mediator,
+            '-exec', 'python %s' % mediator_path,
             self.project.vis if is_single_test else self.project.novis]
         special_params = shlex.split(special_params)
         seed_params = ['-seed', '%s' % seed]
