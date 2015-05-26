@@ -176,14 +176,11 @@ class Executor(object):
         mediator_path = self.project.mediator
         if ' ' in mediator_path:
             mediator_path = '"%s"' % mediator_path
-
-        exec_params = [
-            'java', '-jar', self.project.visualizer,
-            '-exec', 'python %s' % mediator_path,
-            self.project.vis if is_single_test else self.project.novis]
+        exec_params = ['java', '-jar', self.project.visualizer, '-exec', 'python %s' % mediator_path]
+        vis_params = shlex.split(self.project.vis if is_single_test else self.project.novis)
         special_params = shlex.split(special_params)
         seed_params = ['-seed', '%s' % seed]
-        params = exec_params + self.project.params + special_params + seed_params
+        params = exec_params + self.project.params + vis_params + special_params + seed_params
         params = [p for p in params if p]  # clean params of empty values
         return params
 
