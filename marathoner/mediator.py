@@ -34,9 +34,12 @@ class Mediator(object):
         self.__dict__.update(settings)
 
         # choose communicator
-        if self.project_name == 'PathDefenseMarat' or self.visualizer == 'tester.jar':
+        if self.project_name == 'PathDefenseMarat':
             from marathoner.communicators.path_defense_communicator import PathDefenseCommunicator
             self.communicator = PathDefenseCommunicator()
+        elif self.project_name == 'PegJumpingMarat':
+            from marathoner.communicators.peg_jumping_communicator import PegJumpingCommunicator
+            self.communicator = PegJumpingCommunicator()
         else:
             from marathoner.communicators.general_communicator import GeneralCommunicator
             self.communicator = GeneralCommunicator()

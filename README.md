@@ -43,18 +43,18 @@ Or download the source code from GitHub and from *tc-marathoner* directory run: 
 Getting started
 ---------------
 
-Let me show you how to setup Marathoner for a recent Marathon Match called [PathDefense](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=48152&rd=16471).
+Let me show you how to setup Marathoner for a recent Marathon Match called [PegJumping](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=48422&rd=16472).
 
-1. Download the visualizer [tester.jar](http://www.topcoder.com/contest/problem/PathDefense/tester.jar).
-   Create a solution that communicates with visualizer as described [here](http://www.topcoder.com/contest/problem/PathDefense/manual.html)
+1. Download the visualizer [tester.jar](http://www.topcoder.com/contest/problem/PegJumping/tester.jar).
+   Create a solution that communicates with visualizer as described [here](http://www.topcoder.com/contest/problem/PegJumping/manual.html)
    and make sure your solution works by running:
 
    ```$ java -jar tester.jar -exec "<command>" -seed 1```
 
-2. Run from the command line: ```$ marathoner new PathDefenseMarat```
+2. Run from the command line: ```$ marathoner new PegJumpingMarat```
 
-   Marathoner will create in the current directory a new project directory named *PathDefenseMarat*,
-   where it will store all the files related to PathDefense match.
+   Marathoner will create in the current directory a new project directory named *PegJumpingMarat*,
+   where it will store all the files related to PegJumping match.
 
 3. Go into newly created project directory and edit *marathoner.cfg* file.
    Fill out its contents as described in the comments inside the file.
@@ -62,14 +62,14 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [Path
 
    ```
    [marathoner]
-   visualizer = c:\Mimino\PathDefense\tester.jar
-   solution = "c:\Mimino\PathDefense\PathDefense.exe"
-   source = c:\Mimino\PathDefense\PathDefense.cpp
-   testcase = c:\Mimino\PathDefense\testcase.txt
+   visualizer = c:\Mimino\PegJumping\tester.jar
+   solution = "c:\Mimino\PegJumping\PegJumping.exe"
+   source = c:\Mimino\PegJumping\PegJumping.cpp
+   testcase = c:\Mimino\PegJumping\testcase.txt
    maximize = true
    novis = -novis
-   vis = -delay 10 -s 20
-   params = -debug
+   vis = -delay 10 -sz 15
+   params =
    cache = true
    ```
 
