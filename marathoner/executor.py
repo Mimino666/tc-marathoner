@@ -23,7 +23,7 @@ class ExecutorError(Exception):
 
 
 class Executor(object):
-    run_time_re = re.compile(r'^\s*Run\s+time\s*=\s*(\d+(?:[.,]\d+)?)\s*$')
+    run_time_re = re.compile(r'^\s*Run\s+time\s*=\s*([-+]?[0-9]*[.,]?[0-9]+(?:[eE][-+]?[0-9]+)?)\s*$')
 
     def __init__(self, project):
         self.project = project
