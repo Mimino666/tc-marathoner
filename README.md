@@ -43,18 +43,18 @@ Or download the source code from GitHub and from *tc-marathoner* directory run: 
 Getting started
 ---------------
 
-Let me show you how to setup Marathoner for a recent Marathon Match called [PegJumping](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=48422&rd=16472).
+Let me show you how to setup Marathoner for a recent Marathon Match called [PopulationMapping](http://community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=49026&rd=16492).
 
-1. Download the visualizer [tester.jar](http://www.topcoder.com/contest/problem/PegJumping/tester.jar).
-   Create a solution that communicates with visualizer as described [here](http://www.topcoder.com/contest/problem/PegJumping/manual.html)
+1. Download the visualizer [tester.jar](http://www.topcoder.com/contest/problem/PopulationMapping/tester.jar).
+   Create a solution that communicates with visualizer as described [here](http://www.topcoder.com/contest/problem/PopulationMapping/manual.html)
    and make sure your solution works by running:
 
    ```$ java -jar tester.jar -exec "<command>" -seed 1```
 
-2. Run from the command line: ```$ marathoner new PegJumpingMarat```
+2. Run from the command line: ```$ marathoner new PopulationMappingMarat```
 
-   Marathoner will create in the current directory a new project directory named *PegJumpingMarat*,
-   where it will store all the files related to PegJumping match.
+   Marathoner will create in the current directory a new project directory named *PopulationMappingMarat*,
+   where it will store all the files related to PopulationMapping match.
 
 3. Go into newly created project directory and edit *marathoner.cfg* file.
    Fill out its contents as described in the comments inside the file.
@@ -62,14 +62,14 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [PegJ
 
    ```
    [marathoner]
-   visualizer = c:\Mimino\PegJumping\tester.jar
-   solution = "c:\Mimino\PegJumping\PegJumping.exe"
-   source = c:\Mimino\PegJumping\PegJumping.cpp
-   testcase = c:\Mimino\PegJumping\testcase.txt
+   visualizer = c:\Mimino\PopulationMapping\tester.jar
+   solution = "c:\Mimino\PopulationMapping\PopulationMapping.exe"
+   source = c:\Mimino\PopulationMapping\PopulationMapping.cpp
+   testcase = c:\Mimino\PopulationMapping\testcase.txt
    maximize = true
    novis = -novis
-   vis = -delay 10 -sz 15
-   params =
+   vis =
+   params = -scale 2
    cache = true
    ```
 

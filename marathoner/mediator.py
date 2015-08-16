@@ -35,14 +35,14 @@ class Mediator(object):
 
         # choose communicator
         if self.project_name == 'PathDefenseMarat':
-            from marathoner.communicators.path_defense_communicator import PathDefenseCommunicator
-            self.communicator = PathDefenseCommunicator()
+            from marathoner.communicators.path_defense_communicator import Communicator
         elif self.project_name == 'PegJumpingMarat':
-            from marathoner.communicators.peg_jumping_communicator import PegJumpingCommunicator
-            self.communicator = PegJumpingCommunicator()
+            from marathoner.communicators.peg_jumping_communicator import Communicator
+        elif self.project_name == 'PopulationMappingMarat':
+            from marathoner.communicators.population_mapping_communicator import Communicator
         else:
-            from marathoner.communicators.general_communicator import GeneralCommunicator
-            self.communicator = GeneralCommunicator()
+            from marathoner.communicators.general_communicator import Communicator
+        self.communicator = Communicator()
 
         # lines received from the solution
         self.solution_stdout_buffer = []

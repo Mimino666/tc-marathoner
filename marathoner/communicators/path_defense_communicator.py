@@ -1,7 +1,7 @@
 from six.moves import xrange
 
 
-class PathDefenseCommunicator(object):
+class Communicator(object):
     def communicate(self, visualizer, solution, visualizer_cb, solution_cb):
         line = visualizer.readline()  # N
         visualizer_cb(line, flush=False)
