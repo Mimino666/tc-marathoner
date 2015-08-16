@@ -20,7 +20,7 @@ class Contest(BaseContest):
         for line in chain(visualizer_stdout, solution_stderr):
             score_match = self.score_re.match(line)
             if score_match:
-                return float(score_match.group(1))
+                return max(float(score_match.group(1)), 0)
 
     def single_test_starting(self, seed):
         self.old_best_score = self.project.scores[seed].score
