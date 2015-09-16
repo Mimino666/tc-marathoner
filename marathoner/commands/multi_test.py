@@ -20,8 +20,11 @@ class Command(BaseCommand):
         seed2 = int(match.group(2))
         vis_params = match.group(3) or ''
 
+        if seed1 < 1:
+            print_('Error: seed1 has to be at least 1.')
+            return
         if seed2 < seed1:
-            print_('Error: seed1 can\'t be larger than seed2!')
+            print_('Error: seed1 can\'t be larger than seed2.')
             return
 
         self.project.source_hash_transaction_begin()

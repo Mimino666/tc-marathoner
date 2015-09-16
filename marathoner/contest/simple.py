@@ -36,11 +36,12 @@ class Contest(BaseContest):
 
         print_('\tRun time: %.2f' % current_score.run_time)
         print_('\tNew score: %.2f' % current_score.score)
-        if self.old_best_score and best_score.score != self.old_best_score:
-            print_('\tBest score: %.2f (old: %.2f)' % (best_score.score, self.old_best_score))
-        else:
-            print_('\tBest score: %.2f' % best_score.score)
-        print_('\tRelative score: %.5f' % Score.relative_score(self.maximize, current_score, best_score))
+        if seed:
+            if self.old_best_score and best_score.score != self.old_best_score:
+                print_('\tBest score: %.2f (old: %.2f)' % (best_score.score, self.old_best_score))
+            else:
+                print_('\tBest score: %.2f' % best_score.score)
+            print_('\tRelative score: %.5f' % Score.relative_score(self.maximize, current_score, best_score))
 
 
     def multiple_tests_starting(self, num_tests):
