@@ -35,11 +35,13 @@ class Mediator(object):
 
         # choose communicator
         if self.project_name == 'PathDefenseMarat':
-            from marathoner.communicators.path_defense_communicator import Communicator
+            from marathoner.communicators.path_defense import Communicator
         elif self.project_name == 'PegJumpingMarat':
-            from marathoner.communicators.peg_jumping_communicator import Communicator
+            from marathoner.communicators.peg_jumping import Communicator
         elif self.project_name == 'PopulationMappingMarat':
-            from marathoner.communicators.population_mapping_communicator import Communicator
+            from marathoner.communicators.population_mapping import Communicator
+        elif self.project_name == 'ViralInfectionMarat':
+            from marathoner.communicators.viral_infection import Communicator
         else:
             from marathoner.communicators.general_communicator import Communicator
         self.communicator = Communicator()
