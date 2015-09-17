@@ -56,6 +56,8 @@ Let me show you how to setup Marathoner for a recent Marathon Match called [Vira
    Marathoner will create in the current directory a new project directory named *ViralInfectionMarat*,
    where it will store all the files related to ViralInfection match.
 
+   **NOTE: It is important that you name your solution ViralInfectionMarat. Otherwise it will not work correctly, because of the communication protocol used in this match.**
+
 3. Go into newly created project directory and edit *marathoner.cfg* file.
    Fill out its contents as described in the comments inside the file.
    Here is an example of my *marathoner.cfg* file for this match:
